@@ -8,11 +8,12 @@
 
 #include<string>
 #include<iostream>
+#include "Room.h"
 using namespace std;
 
-const int MAX_SIZE = 101;
-typedef string KeyType;
-typedef string ItemType;
+const int MAX_SIZE = 10;
+typedef int KeyType;
+typedef Room ItemType;
 
 
 class Dictionary

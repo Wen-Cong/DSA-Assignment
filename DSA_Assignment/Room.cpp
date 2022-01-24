@@ -24,6 +24,6 @@ void Room::setType(string t) { type = t; }
 
 string Room::getType() { return type; }
 
-void Room::setPrice(double p) { price = p; }2
+void Room::setPrice(double p) { price = p; }
 
 double Room::getPrice() { return price; }
