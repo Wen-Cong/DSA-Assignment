@@ -140,9 +140,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AVL_Tree.cpp" />
+    <ClCompile Include="Booking.cpp" />
+    <ClCompile Include="Booking.h" />
     <ClCompile Include="BST.cpp" />
     <ClCompile Include="Dictionary.cpp" />
     <ClCompile Include="DSA_Assignment.cpp" />
+    <ClCompile Include="Room.cpp" />
+    <ClCompile Include="Room.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AVL_Tree.h" />
