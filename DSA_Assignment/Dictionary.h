@@ -37,7 +37,7 @@ public:
 	// destructor
 	~Dictionary();
 
-	int64_t hash(KeyType key);
+	int hash(KeyType key);
 
 	// add a new item with the specified key to the Dictionary
 	// pre : none

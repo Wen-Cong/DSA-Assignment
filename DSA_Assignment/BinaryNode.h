@@ -5,8 +5,9 @@
 // Module Group : P02 
 //============================================================
 #pragma once
+#include "Booking.h";
 
-typedef int ItemType;
+typedef Booking ItemType;
 
 struct BinaryNode
 {

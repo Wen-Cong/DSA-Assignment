@@ -40,17 +40,10 @@ int charvalue(char c)
 }
 
 
-int64_t Dictionary::hash(KeyType key)
+int Dictionary::hash(KeyType key)
 {
-	int64_t hashValue = 0;
-	for (int i = 0; i < key.length(); i++)
-	{
-		char c = key.at(i);
-		int charValue = charvalue(c);
-		hashValue = (hashValue * 52) + charValue;
-	}
-
-	return hashValue;
+	int index = key % MAX_SIZE;
+	return index;
 }
 
 
@@ -58,7 +51,7 @@ bool Dictionary::add(KeyType newKey, ItemType newItem)
 {
 	if (size < MAX_SIZE)
 	{
-		int index = (this->hash(newKey)) % MAX_SIZE;
+		int index = this->hash(newKey);
 
 		Node* newNode = new Node;
 		newNode->key = newKey;
@@ -102,7 +95,7 @@ void Dictionary::remove(KeyType key)
 {
 	if (!isEmpty())
 	{
-		int index = (this->hash(key)) % MAX_SIZE;
+		int index = this->hash(key);
 		if (items[index] != NULL)
 		{
 			Node* tempNode = items[index];
@@ -140,7 +133,7 @@ ItemType Dictionary::get(KeyType key)
 {
 	if (!isEmpty())
 	{
-		int index = (this->hash(key)) % MAX_SIZE;
+		int index = this->hash(key);
 		if (items[index] != NULL)
 		{
 			Node* tempNode = items[index];
@@ -153,16 +146,16 @@ ItemType Dictionary::get(KeyType key)
 				tempNode = tempNode->next;
 			}
 
-			return NULL;
+			return Room();
 		}
 		else
 		{
-			return NULL;
+			return Room();
 		}
 	}
 	else
 	{
-		return NULL;
+		return Room();
 	}
 }
 
@@ -188,7 +181,7 @@ void Dictionary::print()
 			Node* tempNode = items[i];
 			while (tempNode != NULL)
 			{
-				cout << tempNode->key << ": " << tempNode->item << endl;
+				cout << tempNode->key << ": " << "Room " << tempNode->item.getRoomNum() << "  Type - " << tempNode->item.getType() << endl;
 				tempNode = tempNode->next;
 			}
 		}
