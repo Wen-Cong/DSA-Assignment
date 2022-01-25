@@ -1,30 +1,25 @@
-//============================================================
-// Student Number : S10205010, S10194723
-// Student Name : Lim Xiang, Yeo Wen Cong
-// Team Number : 10
-// Module Group : P02 
-//============================================================
 #pragma once
-#include "Dictionary.h";
+#include "Dictionary_Price.h";
 
 // constructor
-Dictionary::Dictionary()
+Dictionary_Price::Dictionary_Price()
 {
 	size = 0;
-	for (int i = 0; i < MAX_SIZE; i++)
+	for (int i = 0; i < PRICE_MAX_SIZE; i++)
 	{
 		items[i] = NULL;
 	}
 }
 
 // destructor
-Dictionary::~Dictionary()
+Dictionary_Price::~Dictionary_Price()
 {
-	for (int i = 0; i < MAX_SIZE; i++)
+	for (int i = 0; i < PRICE_MAX_SIZE; i++)
 	{
 		items[i] = NULL;
 	}
 }
+
 
 int charvalue(char c)
 {
@@ -40,18 +35,25 @@ int charvalue(char c)
 }
 
 
-int Dictionary::hash(KeyType key)
+int64_t Dictionary_Price::hash(PriceKeyType key)
 {
-	int index = key % MAX_SIZE;
-	return index;
+	int64_t hashValue = 0;
+	for (int i = 0; i < key.length(); i++)
+	{
+		char c = key.at(i);
+		int charValue = charvalue(c);
+		hashValue = (hashValue * 52) + charValue;
+	}
+
+	return hashValue;
 }
 
 
-bool Dictionary::add(KeyType newKey, ItemType newItem)
+bool Dictionary_Price::add(PriceKeyType newKey, PriceType newItem)
 {
-	if (size < MAX_SIZE)
+	if (size < PRICE_MAX_SIZE)
 	{
-		int index = this->hash(newKey);
+		int index = (this->hash(newKey)) % PRICE_MAX_SIZE;
 
 		Node* newNode = new Node;
 		newNode->key = newKey;
@@ -91,11 +93,11 @@ bool Dictionary::add(KeyType newKey, ItemType newItem)
 }
 
 
-void Dictionary::remove(KeyType key)
+void Dictionary_Price::remove(PriceKeyType key)
 {
 	if (!isEmpty())
 	{
-		int index = this->hash(key);
+		int index = (this->hash(key)) % PRICE_MAX_SIZE;
 		if (items[index] != NULL)
 		{
 			Node* tempNode = items[index];
@@ -129,11 +131,11 @@ void Dictionary::remove(KeyType key)
 }
 
 
-ItemType Dictionary::get(KeyType key)
+PriceType Dictionary_Price::get(PriceKeyType key)
 {
 	if (!isEmpty())
 	{
-		int index = this->hash(key);
+		int index = (this->hash(key)) % PRICE_MAX_SIZE;
 		if (items[index] != NULL)
 		{
 			Node* tempNode = items[index];
@@ -146,42 +148,42 @@ ItemType Dictionary::get(KeyType key)
 				tempNode = tempNode->next;
 			}
 
-			return Room();
+			return 0;
 		}
 		else
 		{
-			return Room();
+			return 0;
 		}
 	}
 	else
 	{
-		return Room();
+		return 0;
 	}
 }
 
 
-bool Dictionary::isEmpty()
+bool Dictionary_Price::isEmpty()
 {
 	return size == 0;
 }
 
 
-int Dictionary::getLength()
+int Dictionary_Price::getLength()
 {
 	return size;
 }
 
 
-void Dictionary::print()
+void Dictionary_Price::print()
 {
-	for (int i = 0; i < MAX_SIZE; i++)
+	for (int i = 0; i < PRICE_MAX_SIZE; i++)
 	{
 		if (items[i] != NULL)
 		{
 			Node* tempNode = items[i];
 			while (tempNode != NULL)
 			{
-				cout << tempNode->key << ": " << "Room " << tempNode->item.getRoomNum() << "  Type - " << tempNode->item.getType() << endl;
+				cout << tempNode->key << ": " << tempNode->item << endl;
 				tempNode = tempNode->next;
 			}
 		}

@@ -11,52 +11,52 @@
 #include "Room.h"
 using namespace std;
 
-const int MAX_SIZE = 10;
-typedef int KeyType;
-typedef Room ItemType;
+const int ROOM_MAX_SIZE = 101;
+typedef int RoomKeyType;
+typedef Room RoomType;
 
 
-class Dictionary
+class Dictionary_Room
 {
 private:
 	struct Node
 	{
-		KeyType	 key;   // search key
-		ItemType item;	// data item
+		RoomKeyType	key;   // search key
+		RoomType item;	// data item
 		Node     *next;	// pointer pointing to next item with same search key
 	};
 
-	Node *items[MAX_SIZE];
+	Node *items[ROOM_MAX_SIZE];
 	int  size;			// number of items in the Dictionary
 
 public:
 
 	// constructor
-	Dictionary();
+	Dictionary_Room();
 
 	// destructor
-	~Dictionary();
+	~Dictionary_Room();
 
-	int hash(KeyType key);
+	int hash(RoomKeyType key);
 
 	// add a new item with the specified key to the Dictionary
 	// pre : none
 	// post: new item is added to the Dictionary
 	//       size of Dictionary is increased by 1
-	bool add(KeyType newKey, ItemType newItem);
+	bool add(RoomKeyType newKey, RoomType newItem);
 
 	// remove an item with the specified key in the Dictionary
 	// pre : key must exist in the Dictionary
 	// post: item is removed from the Dictionary
 	//       size of Dictionary is decreased by 1
-	void remove(KeyType key);
+	void remove(RoomKeyType key);
 
 
 	// get an item with the specified key in the Dictionary (retrieve)
 	// pre : key must exist in the dictionary
 	// post: none
 	// return the item with the specified key from the Dictionary
-	ItemType get(KeyType key);
+	RoomType get(RoomKeyType key);
 
 	// check if the Dictionary is empty
 	// pre : none
@@ -75,6 +75,6 @@ public:
 	// display the items in the Dictionary
 	void print();
 
-	// void replace(KeyType key, ItemType item);
-	// bool contains(KeyType key);
+	// void replace(RoomKeyType key, RoomType item);
+	// bool contains(RoomKeyType key);
 };
