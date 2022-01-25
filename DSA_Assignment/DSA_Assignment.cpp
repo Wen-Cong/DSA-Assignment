@@ -9,19 +9,17 @@
 #include <string>
 #include <sstream>
 #include "Room.h"
-#include "Dictionary.h"
 #include "BST_Booking.h"
 #include "BST_Checkin.h"
 #include "Dictionary_Room.h"
 #include "Dictionary_Price.h"
-#include "BST.h"
 #include "Booking.h"
 using namespace std;
 
 int toInt(string text);
 tm toDateTime(string dateString);
 void initRoomData(Dictionary_Room& roomList, Dictionary_Price& priceList);
-void initBookingData(BST& bookingList, Dictionary_Room roomList, Dictionary_Price priceList);
+void initBookingData(BST_Booking& bookingList, Dictionary_Room roomList, Dictionary_Price priceList);
 
 int main()
 {

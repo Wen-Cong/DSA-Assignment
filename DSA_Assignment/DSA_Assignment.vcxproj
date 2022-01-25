@@ -142,7 +142,8 @@
     <ClCompile Include="AVL_Tree.cpp" />
     <ClCompile Include="Booking.cpp" />
     <ClCompile Include="Booking.h" />
-    <ClCompile Include="BST.cpp" />
+    <ClCompile Include="BST_Booking.cpp" />
+    <ClCompile Include="BST_Checkin.cpp" />
     <ClCompile Include="Dictionary_Price.cpp" />
     <ClCompile Include="Dictionary_Room.cpp" />
     <ClCompile Include="DSA_Assignment.cpp" />
@@ -152,7 +153,8 @@
   <ItemGroup>
     <ClInclude Include="AVL_Tree.h" />
     <ClInclude Include="BinaryNode.h" />
-    <ClInclude Include="BST.h" />
+    <ClInclude Include="BST_Booking.h" />
+    <ClInclude Include="BST_Checkin.h" />
     <ClInclude Include="Dictionary_Price.h" />
     <ClInclude Include="Dictionary_Room.h" />
   </ItemGroup>

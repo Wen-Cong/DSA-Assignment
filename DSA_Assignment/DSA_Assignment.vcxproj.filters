@@ -21,9 +21,6 @@
     <ClCompile Include="AVL_Tree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BST_Checkin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Dictionary_Room.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -42,15 +39,18 @@
     <ClCompile Include="Dictionary_Price.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BST_Booking.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BST_Checkin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AVL_Tree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BinaryNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BST_Checkin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Dictionary_Room.h">
@@ -60,6 +60,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BST_Booking.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BST_Checkin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
