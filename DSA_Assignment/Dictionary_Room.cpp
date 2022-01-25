@@ -11,7 +11,7 @@
 Dictionary_Room::Dictionary_Room()
 {
 	size = 0;
-	for (int i = 0; i < MAX_SIZE; i++)
+	for (int i = 0; i < ROOM_MAX_SIZE; i++)
 	{
 		items[i] = NULL;
 	}
@@ -20,7 +20,7 @@ Dictionary_Room::Dictionary_Room()
 // destructor
 Dictionary_Room::~Dictionary_Room()
 {
-	for (int i = 0; i < MAX_SIZE; i++)
+	for (int i = 0; i < ROOM_MAX_SIZE; i++)
 	{
 		items[i] = NULL;
 	}
@@ -29,14 +29,14 @@ Dictionary_Room::~Dictionary_Room()
 
 int Dictionary_Room::hash(RoomKeyType key)
 {
-	int index = key % MAX_SIZE;
+	int index = key % ROOM_MAX_SIZE;
 	return index;
 }
 
 
 bool Dictionary_Room::add(RoomKeyType newKey, RoomType newItem)
 {
-	if (size < MAX_SIZE)
+	if (size < ROOM_MAX_SIZE)
 	{
 		int index = this->hash(newKey);
 
@@ -161,7 +161,7 @@ int Dictionary_Room::getLength()
 
 void Dictionary_Room::print()
 {
-	for (int i = 0; i < MAX_SIZE; i++)
+	for (int i = 0; i < ROOM_MAX_SIZE; i++)
 	{
 		if (items[i] != NULL)
 		{

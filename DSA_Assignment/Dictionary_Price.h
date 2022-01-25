@@ -4,7 +4,7 @@
 #include<iostream>
 using namespace std;
 
-const int MAX_SIZE = 5;
+const int PRICE_MAX_SIZE = 5;
 typedef string PriceKeyType;
 typedef double PriceType;
 
@@ -19,7 +19,7 @@ private:
 		Node     *next;	// pointer pointing to next item with same search key
 	};
 
-	Node *items[MAX_SIZE];
+	Node *items[PRICE_MAX_SIZE];
 	int  size;			// number of items in the Dictionary_Price
 
 public:

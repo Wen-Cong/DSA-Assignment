@@ -11,7 +11,7 @@
 #include "Room.h"
 using namespace std;
 
-const int MAX_SIZE = 101;
+const int ROOM_MAX_SIZE = 101;
 typedef int RoomKeyType;
 typedef Room RoomType;
 
@@ -26,7 +26,7 @@ private:
 		Node     *next;	// pointer pointing to next item with same search key
 	};
 
-	Node *items[MAX_SIZE];
+	Node *items[ROOM_MAX_SIZE];
 	int  size;			// number of items in the Dictionary
 
 public:

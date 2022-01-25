@@ -5,7 +5,7 @@
 Dictionary_Price::Dictionary_Price()
 {
 	size = 0;
-	for (int i = 0; i < MAX_SIZE; i++)
+	for (int i = 0; i < PRICE_MAX_SIZE; i++)
 	{
 		items[i] = NULL;
 	}
@@ -14,7 +14,7 @@ Dictionary_Price::Dictionary_Price()
 // destructor
 Dictionary_Price::~Dictionary_Price()
 {
-	for (int i = 0; i < MAX_SIZE; i++)
+	for (int i = 0; i < PRICE_MAX_SIZE; i++)
 	{
 		items[i] = NULL;
 	}
@@ -51,9 +51,9 @@ int64_t Dictionary_Price::hash(PriceKeyType key)
 
 bool Dictionary_Price::add(PriceKeyType newKey, PriceType newItem)
 {
-	if (size < MAX_SIZE)
+	if (size < PRICE_MAX_SIZE)
 	{
-		int index = (this->hash(newKey)) % MAX_SIZE;
+		int index = (this->hash(newKey)) % PRICE_MAX_SIZE;
 
 		Node* newNode = new Node;
 		newNode->key = newKey;
@@ -97,7 +97,7 @@ void Dictionary_Price::remove(PriceKeyType key)
 {
 	if (!isEmpty())
 	{
-		int index = (this->hash(key)) % MAX_SIZE;
+		int index = (this->hash(key)) % PRICE_MAX_SIZE;
 		if (items[index] != NULL)
 		{
 			Node* tempNode = items[index];
@@ -135,7 +135,7 @@ PriceType Dictionary_Price::get(PriceKeyType key)
 {
 	if (!isEmpty())
 	{
-		int index = (this->hash(key)) % MAX_SIZE;
+		int index = (this->hash(key)) % PRICE_MAX_SIZE;
 		if (items[index] != NULL)
 		{
 			Node* tempNode = items[index];
@@ -176,7 +176,7 @@ int Dictionary_Price::getLength()
 
 void Dictionary_Price::print()
 {
-	for (int i = 0; i < MAX_SIZE; i++)
+	for (int i = 0; i < PRICE_MAX_SIZE; i++)
 	{
 		if (items[i] != NULL)
 		{
