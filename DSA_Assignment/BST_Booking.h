@@ -4,15 +4,17 @@
 // Team Number : 10
 // Module Group : P02 
 //============================================================
-// BST.h - Specification of Binary Search Tree
+// BST_Booking.cpp - Implementation of Binary Search Tree
+// Bookings status that are only booked are stored in this BST
+// When bookings status change from booked to checkin the record will
+// be removed from this tree and inserted into the BST_Checkin tree
 #pragma once
 #include<iostream>
 using namespace std;
-
 #include "BinaryNode.h"
 #include "AVL_Tree.h"		// AVL Tree functions
 
-class BST
+class BST_Booking
 {
 private:
 	BinaryNode* root;		// root of the BST
@@ -20,7 +22,7 @@ private:
 public:
 
 	// constructor
-	BST();
+	BST_Booking();
 
 	// search an item in the binary search tree
 	BinaryNode* search(ItemType target);
@@ -28,11 +30,11 @@ public:
 
 	// insert an item to the binary search tree
 	void insert(ItemType item);
-	void insert(BinaryNode* &root, ItemType item);
+	void insert(BinaryNode*& root, ItemType item);
 
 	// delete an item from the binary search tree
 	void remove(ItemType target);
-	void remove(BinaryNode* &root, ItemType target);
+	void remove(BinaryNode*& root, ItemType target);
 
 	// traverse the binary search tree in inorder
 	void inorder();
@@ -59,6 +61,6 @@ public:
 
 	// check if the binary search tree is balanced
 	bool isBalanced();
-	bool isBalanced(BinaryNode *t);
+	bool isBalanced(BinaryNode* t);
 };
 

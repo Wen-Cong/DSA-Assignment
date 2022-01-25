@@ -4,33 +4,42 @@
 // Team Number : 10
 // Module Group : P02 
 //============================================================
-// BST.cpp - Implementation of Binary Search Tree
-#include "BST.h"
-
+// BST_Checkin.cpp - Implementation of Binary Search Tree
+// Bookings that guests have Checkin are stored in this BST
+#include "BST_Checkin.h"
+#include <time.h>
 #define max(x,y) ((x > y)? x : y)
 
 // constructor
-BST::BST()
+BST_Checkin::BST_Checkin()
 {
 	root = NULL;
 }
 
 // search an item in the binary search tree
-BinaryNode* BST::search(ItemType target)
+BinaryNode* BST_Checkin::search(ItemType target)
 {
 	return search(root, target);
 }
 
-BinaryNode* BST::search(BinaryNode* t, ItemType target)
+BinaryNode* BST_Checkin::search(BinaryNode* t, ItemType target)
 {
 	if (t == NULL)	// item not found
 		return NULL;
 	else
 	{
-		if (t->item == target)		// item found
+		//Comparing time the year have to be the no. of years different from 1900
+		tm compare = t->item.getCheckIn();
+		compare.tm_year -= 1900;
+		tm temp = target.getCheckIn();
+		temp.tm_year -= 1900;
+		// if there is no time difference means its exact
+		if (difftime(mktime(&compare), mktime(&temp))==0)		// item found
 			return t;
 		else
-			if (target < t->item)	// search in left subtree
+			// if diff time is positive, means target time is earlier than the root time.
+			if (difftime(mktime(&compare), mktime(&temp)) > 0
+				)	// search in left subtree
 				return search(t->left, target);
 			else					// search in right subtree
 				return search(t->right, target);
@@ -38,12 +47,12 @@ BinaryNode* BST::search(BinaryNode* t, ItemType target)
 }
 
 // insert an item to the binary search tree
-void BST::insert(ItemType item)
+void BST_Checkin::insert(ItemType item)
 {
 	insert(root, item);
 }
 
-void BST::insert(BinaryNode* &t, ItemType item)
+void BST_Checkin::insert(BinaryNode* &t, ItemType item)
 {
 	if (t == NULL)
 	{
@@ -53,17 +62,25 @@ void BST::insert(BinaryNode* &t, ItemType item)
 		newNode->right = NULL;
 		t = newNode;
 	}
-	else if (item < t->item)
-		insert(t->left, item);  // insert in left subtree
-	else
-		insert(t->right, item); // insert in right subtree	
+	else {
+		//Comparing time the year have to be the no. of years different from 1900
+		tm compare = t->item.getCheckIn();
+		compare.tm_year -= 1900;
+		tm temp = item.getCheckIn();
+		temp.tm_year -= 1900;
+		//if difftime > 1 temp is earlier
+		if (difftime(mktime(&compare), mktime(&temp)) > 0)
+			insert(t->left, item);  // insert in left subtree
+		else
+			insert(t->right, item); // insert in right subtree	
+	}
 
 	t = balance(t);				// balance the tree (AVL Tree function)
 }
 
 
 // traverse the binary search tree in inorder
-void BST::inorder()
+void BST_Checkin::inorder()
 {
 	if (isEmpty())
 		cout << "No item found" << endl;
@@ -71,17 +88,17 @@ void BST::inorder()
 		inorder(root);
 }
 
-void BST::inorder(BinaryNode* t)
+void BST_Checkin::inorder(BinaryNode* t)
 {
 	if (t != NULL)
 	{
 		inorder(t->left);
-		cout << t->item << endl;
+		cout << t->item.getId() << endl;
 		inorder(t->right);
 	}
 }
 // traverse the binary search tree in preorder
-void BST::preorder()
+void BST_Checkin::preorder()
 {
 	if (isEmpty())
 		cout << "No item found" << endl;
@@ -89,18 +106,18 @@ void BST::preorder()
 		preorder(root);
 }
 
-void BST::preorder(BinaryNode* t)
+void BST_Checkin::preorder(BinaryNode* t)
 {
 	if (t != NULL)
 	{
-		cout << t->item << endl;
+		cout << t->item.getId() << endl;
 		preorder(t->left);
 		preorder(t->right);
 	}
 }
 
 // traverse the binary search tree in postorder
-void BST::postorder()
+void BST_Checkin::postorder()
 {
 	if (isEmpty())
 		cout << "No item found" << endl;
@@ -108,29 +125,29 @@ void BST::postorder()
 		postorder(root);
 }
 
-void BST::postorder(BinaryNode* t)
+void BST_Checkin::postorder(BinaryNode* t)
 {
 	if (t != NULL)
 	{
 		postorder(t->left);
 		postorder(t->right);
-		cout << t->item << endl;
+		cout << t->item.getId() << endl;
 	}
 }
 
 // check if the binary search tree is empty
-bool BST::isEmpty()
+bool BST_Checkin::isEmpty()
 {
 	return (root == NULL);
 }
 
 // count the number of nodes in the binary search tree
-int BST::countNodes()
+int BST_Checkin::countNodes()
 {
 	return countNodes(root);
 }
 
-int BST::countNodes(BinaryNode* t)
+int BST_Checkin::countNodes(BinaryNode* t)
 {
 	if (t == NULL)
 		return 0;
@@ -139,12 +156,12 @@ int BST::countNodes(BinaryNode* t)
 }
 
 // compute the height of the binary search tree
-int BST::getHeight()
+int BST_Checkin::getHeight()
 {
 	return getHeight(root);
 }
 
-int BST::getHeight(BinaryNode* t)
+int BST_Checkin::getHeight(BinaryNode* t)
 {
 	if (t == NULL)
 		return 0;
@@ -158,12 +175,12 @@ int BST::getHeight(BinaryNode* t)
 }
 
 // check if the binary search tree is balanced
-bool BST::isBalanced()
+bool BST_Checkin::isBalanced()
 {
 	return isBalanced(root);
 }
 
-bool BST::isBalanced(BinaryNode *t)
+bool BST_Checkin::isBalanced(BinaryNode *t)
 {
 	if (t == NULL)
 		return true;
@@ -179,19 +196,25 @@ bool BST::isBalanced(BinaryNode *t)
 }
 
 // delete an item from the binary search tree
-void BST::remove(ItemType target)
+void BST_Checkin::remove(ItemType target)
 {
 	remove(root, target);
 	balanceTree(root);			// AVL Tree function
 }
 
-void BST::remove(BinaryNode* &t, ItemType item) 
+void BST_Checkin::remove(BinaryNode* &t, ItemType item)
 {
 	if (t != NULL)
 	{
-		if (item < t->item)			// search in left subtree
+		//Comparing time the year have to be the no. of years different from 1900
+		tm compare = t->item.getCheckIn();
+		compare.tm_year -= 1900;
+		tm temp = item.getCheckIn();
+		temp.tm_year -= 1900;
+		//if difftime > 1 temp is earlier
+		if (difftime(mktime(&compare), mktime(&temp)) > 0)			// search in left subtree
 			remove(t->left, item);
-		else if (item > t->item)	// search in right subtree
+		else if (difftime(mktime(&compare),mktime(&temp)) < 0)	// search in right subtree
 			remove(t->right, item);
 		else						// item == t->item (found) - base case
 		{

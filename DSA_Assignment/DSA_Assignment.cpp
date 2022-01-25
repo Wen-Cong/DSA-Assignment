@@ -10,14 +10,15 @@
 #include <sstream>
 #include "Room.h"
 #include "Dictionary.h"
-#include "BST.h"
+#include "BST_Booking.h"
+#include "BST_Checkin.h"
 #include "Booking.h"
 using namespace std;
 
 int toInt(string text);
 tm toDateTime(string dateString);
 void initRoomData(Dictionary& roomList);
-void initBookingData(BST& bookingList, Dictionary roomList);
+void initBookingData(BST_Booking& bookingList, Dictionary roomList);
 
 int main()
 {
@@ -76,7 +77,7 @@ void initRoomData(Dictionary& roomList) {
     inputFile.close();
 }
 
-void initBookingData(BST& bookingList, Dictionary roomList) {
+void initBookingData(BST_Booking& bookingList, Dictionary roomList) {
     // Open booking csv file and import booking data
     ifstream inputFile;
     inputFile.open("Bookings.csv");
