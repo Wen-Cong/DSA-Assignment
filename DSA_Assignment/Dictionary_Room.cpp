@@ -5,10 +5,10 @@
 // Module Group : P02 
 //============================================================
 #pragma once
-#include "Dictionary.h";
+#include "Dictionary_Room.h";
 
 // constructor
-Dictionary::Dictionary()
+Dictionary_Room::Dictionary_Room()
 {
 	size = 0;
 	for (int i = 0; i < MAX_SIZE; i++)
@@ -18,7 +18,7 @@ Dictionary::Dictionary()
 }
 
 // destructor
-Dictionary::~Dictionary()
+Dictionary_Room::~Dictionary_Room()
 {
 	for (int i = 0; i < MAX_SIZE; i++)
 	{
@@ -26,28 +26,15 @@ Dictionary::~Dictionary()
 	}
 }
 
-int charvalue(char c)
-{
-	if (isalpha(c))
-	{
-		if (isupper(c))
-			return (int)c - (int)'A';
-		else
-			return (int)c - (int)'a' + 26;
-	}
-	else
-		return -1;
-}
 
-
-int Dictionary::hash(KeyType key)
+int Dictionary_Room::hash(RoomKeyType key)
 {
 	int index = key % MAX_SIZE;
 	return index;
 }
 
 
-bool Dictionary::add(KeyType newKey, ItemType newItem)
+bool Dictionary_Room::add(RoomKeyType newKey, RoomType newItem)
 {
 	if (size < MAX_SIZE)
 	{
@@ -91,7 +78,7 @@ bool Dictionary::add(KeyType newKey, ItemType newItem)
 }
 
 
-void Dictionary::remove(KeyType key)
+void Dictionary_Room::remove(RoomKeyType key)
 {
 	if (!isEmpty())
 	{
@@ -129,7 +116,7 @@ void Dictionary::remove(KeyType key)
 }
 
 
-ItemType Dictionary::get(KeyType key)
+RoomType Dictionary_Room::get(RoomKeyType key)
 {
 	if (!isEmpty())
 	{
@@ -160,19 +147,19 @@ ItemType Dictionary::get(KeyType key)
 }
 
 
-bool Dictionary::isEmpty()
+bool Dictionary_Room::isEmpty()
 {
 	return size == 0;
 }
 
 
-int Dictionary::getLength()
+int Dictionary_Room::getLength()
 {
 	return size;
 }
 
 
-void Dictionary::print()
+void Dictionary_Room::print()
 {
 	for (int i = 0; i < MAX_SIZE; i++)
 	{

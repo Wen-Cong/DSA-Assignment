@@ -24,7 +24,7 @@
     <ClCompile Include="BST.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Dictionary.cpp">
+    <ClCompile Include="Dictionary_Room.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Booking.h">
@@ -39,6 +39,9 @@
     <ClCompile Include="Room.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Dictionary_Price.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AVL_Tree.h">
@@ -50,7 +53,10 @@
     <ClInclude Include="BST.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Dictionary.h">
+    <ClInclude Include="Dictionary_Room.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Dictionary_Price.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

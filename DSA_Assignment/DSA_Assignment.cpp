@@ -9,21 +9,23 @@
 #include <string>
 #include <sstream>
 #include "Room.h"
-#include "Dictionary.h"
+#include "Dictionary_Room.h"
+#include "Dictionary_Price.h"
 #include "BST.h"
 #include "Booking.h"
 using namespace std;
 
 int toInt(string text);
 tm toDateTime(string dateString);
-void initRoomData(Dictionary& roomList);
-void initBookingData(BST& bookingList, Dictionary roomList);
+void initRoomData(Dictionary_Room& roomList, Dictionary_Price& priceList);
+void initBookingData(BST& bookingList, Dictionary_Room roomList, Dictionary_Price priceList);
 
 int main()
 {
     // Initialise room data using dictionary data structure
-    Dictionary roomList = Dictionary();
-    initRoomData(roomList);
+    Dictionary_Room roomList = Dictionary_Room();
+    Dictionary_Price priceList = Dictionary_Price();
+    initRoomData(roomList, priceList);
     roomList.print();
 }
 
@@ -36,10 +38,15 @@ int toInt(string text) {
 
 tm toDateTime(string dateString) {
     // TO-DO: Convert string to tm type
-    return tm();
+    tm date;
+    char aString[] = "03/04/2020  06:09:02";
+    sscanf_s(aString, "%d/%d/%4d  %d:%d:%d",
+        &date.tm_mday, &date.tm_mon, &date.tm_year, &date.tm_hour, &date.tm_min, &date.tm_sec);
+
+    return date;
 }
 
-void initRoomData(Dictionary& roomList) {
+void initRoomData(Dictionary_Room& roomList, Dictionary_Price& priceList) {
     // Open room csv file and import room data
     ifstream inputFile;
     inputFile.open("Rooms.csv");
@@ -69,6 +76,7 @@ void initRoomData(Dictionary& roomList) {
 
             Room r = Room(roomNum, roomType, price);
             roomList.add(roomNum, r);
+            priceList.add(roomType, price);
         }
     }
 
@@ -76,7 +84,7 @@ void initRoomData(Dictionary& roomList) {
     inputFile.close();
 }
 
-void initBookingData(BST& bookingList, Dictionary roomList) {
+void initBookingData(BST& bookingList, Dictionary_Room roomList, Dictionary_Price priceList) {
     // Open booking csv file and import booking data
     ifstream inputFile;
     inputFile.open("Bookings.csv");
@@ -130,10 +138,13 @@ void initBookingData(BST& bookingList, Dictionary roomList) {
             tm in = toDateTime(bIn);
             tm out = toDateTime(bOut);
             // Get room item from room list using room number
-            Room bookedRoom = (Room) (roomList.get(roomNum));
+            Room bookedRoom = roomList.get(roomNum);
             if (bookedRoom.getRoomNum() == NULL) {
+                // Find price for room type retrieve set room price for bookedRoom
+                double price = priceList.get(bRoomType);
+                // Set price and room type into room object
                 bookedRoom.setType(bRoomType);
-                // TO-DO: Find price for room type retrieve set room price for bookedRoom
+                bookedRoom.setPrice(price);
             }
 
             Booking b = Booking(id, date, bGuestName, bookedRoom, bStatus, in, out, guestNum, bReq);

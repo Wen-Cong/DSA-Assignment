@@ -143,7 +143,8 @@
     <ClCompile Include="Booking.cpp" />
     <ClCompile Include="Booking.h" />
     <ClCompile Include="BST.cpp" />
-    <ClCompile Include="Dictionary.cpp" />
+    <ClCompile Include="Dictionary_Price.cpp" />
+    <ClCompile Include="Dictionary_Room.cpp" />
     <ClCompile Include="DSA_Assignment.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="Room.h" />
@@ -152,7 +153,8 @@
     <ClInclude Include="AVL_Tree.h" />
     <ClInclude Include="BinaryNode.h" />
     <ClInclude Include="BST.h" />
-    <ClInclude Include="Dictionary.h" />
+    <ClInclude Include="Dictionary_Price.h" />
+    <ClInclude Include="Dictionary_Room.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
