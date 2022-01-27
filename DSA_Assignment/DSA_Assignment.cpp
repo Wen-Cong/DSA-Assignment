@@ -23,11 +23,15 @@ void initBookingData(BST_Booking& bookingList, Dictionary_Room roomList, Diction
 
 int main()
 {
+    cout << "Initialising Data, Please wait..." << endl << endl;
     // Initialise room data using dictionary data structure
+    BST_Booking bookingList = BST_Booking();
     Dictionary_Room roomList = Dictionary_Room();
     Dictionary_Price priceList = Dictionary_Price();
     initRoomData(roomList, priceList);
-    roomList.print();
+    initBookingData(bookingList, roomList, priceList);
+    
+
 }
 
 int toInt(string text) {
@@ -38,11 +42,22 @@ int toInt(string text) {
 }
 
 tm toDateTime(string dateString) {
-    // TO-DO: Convert string to tm type
+    // Convert string to tm type
     tm date;
-    char aString[] = "03/04/2020  06:09:02";
-    sscanf_s(aString, "%d/%d/%4d  %d:%d:%d",
-        &date.tm_mday, &date.tm_mon, &date.tm_year, &date.tm_hour, &date.tm_min, &date.tm_sec);
+    // Date time with hour and minute parameter
+    if (dateString.length() == 16) {
+        char aString[17];
+        strcpy_s(aString, dateString.c_str());
+        sscanf_s(aString, "%d/%d/%4d  %d:%d",
+            &date.tm_mday, &date.tm_mon, &date.tm_year, &date.tm_hour, &date.tm_min);
+    }
+    // Date time with only day, month and year
+    else if (dateString.length() == 10) {
+        char aString[11];
+        strcpy_s(aString, dateString.c_str());
+        sscanf_s(aString, "%d/%d/%4d",
+            &date.tm_mday, &date.tm_mon, &date.tm_year);
+    }
 
     return date;
 }
@@ -85,7 +100,7 @@ void initRoomData(Dictionary_Room& roomList, Dictionary_Price& priceList) {
     inputFile.close();
 }
 
-void initBookingData(BST_Booking& bookingList, Dictionary roomList) {
+void initBookingData(BST_Booking& bookingList, Dictionary_Room roomList, Dictionary_Price priceList) {
     // Open booking csv file and import booking data
     ifstream inputFile;
     inputFile.open("Bookings.csv");
@@ -149,7 +164,7 @@ void initBookingData(BST_Booking& bookingList, Dictionary roomList) {
             }
 
             Booking b = Booking(id, date, bGuestName, bookedRoom, bStatus, in, out, guestNum, bReq);
-            //bookingList.insert(b);
+            bookingList.insert(b);
         }
     }
 

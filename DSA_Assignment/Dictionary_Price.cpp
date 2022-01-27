@@ -23,26 +23,30 @@ Dictionary_Price::~Dictionary_Price()
 
 int charvalue(char c)
 {
+	int charval;
 	if (isalpha(c))
 	{
 		if (isupper(c))
-			return (int)c - (int)'A';
+			charval =(int)c - (int)'A';
 		else
-			return (int)c - (int)'a' + 26;
+			charval = (int)c - (int)'a' + 26;
 	}
 	else
-		return -1;
+		charval = -1;
+
+	return charval;
 }
 
 
-int64_t Dictionary_Price::hash(PriceKeyType key)
+long long Dictionary_Price::hash(PriceKeyType key)
 {
-	int64_t hashValue = 0;
-	for (int i = 0; i < key.length(); i++)
+	string firstWord = key.substr(0, key.find(" "));
+	long long hashValue = 0;
+	for (int i = 0; i < firstWord.length(); i++)
 	{
-		char c = key.at(i);
+		char c = firstWord.at(i);
 		int charValue = charvalue(c);
-		hashValue = (hashValue * 52) + charValue;
+		hashValue = (hashValue * 53) + charValue;
 	}
 
 	return hashValue;
@@ -54,7 +58,6 @@ bool Dictionary_Price::add(PriceKeyType newKey, PriceType newItem)
 	if (size < PRICE_MAX_SIZE)
 	{
 		int index = (this->hash(newKey)) % PRICE_MAX_SIZE;
-
 		Node* newNode = new Node;
 		newNode->key = newKey;
 		newNode->item = newItem;

@@ -4,7 +4,7 @@
 #include<iostream>
 using namespace std;
 
-const int PRICE_MAX_SIZE = 5;
+const int PRICE_MAX_SIZE = 7;
 typedef string PriceKeyType;
 typedef double PriceType;
 
@@ -30,7 +30,7 @@ public:
 	// destructor
 	~Dictionary_Price();
 
-	int64_t hash(PriceKeyType key);
+	long long hash(PriceKeyType key);
 
 	// add a new item with the specified key to the Dictionary_Price
 	// pre : none
