@@ -179,6 +179,7 @@ int Dictionary_Price::getLength()
 
 void Dictionary_Price::print()
 {
+	int count = 0;
 	for (int i = 0; i < PRICE_MAX_SIZE; i++)
 	{
 		if (items[i] != NULL)
@@ -186,7 +187,8 @@ void Dictionary_Price::print()
 			Node* tempNode = items[i];
 			while (tempNode != NULL)
 			{
-				cout << tempNode->key << ": " << tempNode->item << endl;
+				count++;
+				cout << "[" << count << "] " << tempNode->key << " ($" << tempNode->item << ")" << endl;
 				tempNode = tempNode->next;
 			}
 		}

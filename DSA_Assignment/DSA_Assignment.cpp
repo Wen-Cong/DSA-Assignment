@@ -20,6 +20,8 @@ int toInt(string text);
 tm toDateTime(string dateString);
 void initRoomData(Dictionary_Room& roomList, Dictionary_Price& priceList);
 void initBookingData(BST_Booking& bookingList, Dictionary_Room roomList, Dictionary_Price priceList);
+void displayMainMenu();
+string convertOptionToRoomTypeName(string opt);
 
 int main()
 {
@@ -30,8 +32,61 @@ int main()
     Dictionary_Price priceList = Dictionary_Price();
     initRoomData(roomList, priceList);
     initBookingData(bookingList, roomList, priceList);
-    
 
+
+    string choice;
+    while (choice != "0")
+    {
+        // Display main menu options
+        displayMainMenu();
+
+        cin >> choice;
+        if (choice == "0")
+            break;
+
+        else if (choice == "1")
+        {
+            // TO DO
+        }
+
+        else if (choice == "2")
+        {
+            // Add booking Use Case
+            string checkIn;
+            string checkOut;
+            string roomTypeChoice;
+            cout << "\n===================== ADD BOOKING =====================\n";
+            // Display all rooms type and respective price tags
+            priceList.print();
+            // Prompt user for room type choice, check in date and check out date
+            cout << "\nPlease Choose a Room Type: ";
+            cin >> roomTypeChoice;
+            cout << "Please Enter Check In Date (dd/mm/yyyy): ";
+            cin >> checkIn;
+            cout << "Please Enter Check Out Date (dd/mm/yyyy): ";
+            cin >> checkOut;
+
+            tm in = toDateTime(checkIn);
+            tm out = toDateTime(checkOut);
+            string roomType = convertOptionToRoomTypeName(roomTypeChoice);
+        }
+
+        else if (choice == "3")
+        {
+            // TO DO
+        }
+
+        else if (choice == "4")
+        {
+            // TO DO
+        }
+
+        else
+        {
+            cout << "Invalid Option\n\n";
+            continue;
+        }
+    }
 }
 
 int toInt(string text) {
@@ -43,7 +98,7 @@ int toInt(string text) {
 
 tm toDateTime(string dateString) {
     // Convert string to tm type
-    tm date;
+    tm date = tm();
     // Date time with hour and minute parameter
     if (dateString.length() == 16) {
         char aString[17];
@@ -170,4 +225,39 @@ void initBookingData(BST_Booking& bookingList, Dictionary_Room roomList, Diction
 
     // Close file stream
     inputFile.close();
+}
+
+void displayMainMenu() {
+    cout << "===================== MAIN MENU =====================\n";
+    cout << "[1] Check In Guest\n";
+    cout << "[2] Add Booking\n";
+    cout << "[3] Display Staying Guest by Date\n";
+    cout << "[4] Display Occupied Rooms by Month\n";
+    cout << "[0] Exit\n";
+    cout << "Your Choice: ";
+}
+
+string convertOptionToRoomTypeName(string opt) {
+    if (opt == "1")
+    {
+        return "Executive Sea View";
+    }
+    else if (opt == "2")
+    {
+        return "President Suite";
+    }
+
+    else if (opt == "3")
+    {
+        return "Deluxe City View";
+    }
+    else if (opt == "4")
+    {
+        return "Standard City View";
+    }
+    else
+    {
+        cout << "Invalid Option\n\n";
+        return "";
+    }
 }
