@@ -70,6 +70,7 @@ bool Dictionary_Price::add(PriceKeyType newKey, PriceType newItem)
 			{ 
 				if (tempNode->key == newKey)
 				{
+					tempNode->item.count++;
 					return false;
 				}
 				tempNode = tempNode->next;
@@ -77,6 +78,7 @@ bool Dictionary_Price::add(PriceKeyType newKey, PriceType newItem)
 
 			if (tempNode->key == newKey)
 			{
+				tempNode->item.count++;
 				return false;
 			}
 			tempNode->next = newNode;
@@ -151,16 +153,16 @@ PriceType Dictionary_Price::get(PriceKeyType key)
 				tempNode = tempNode->next;
 			}
 
-			return 0;
+			return PriceRoomType();
 		}
 		else
 		{
-			return 0;
+			return PriceRoomType();
 		}
 	}
 	else
 	{
-		return 0;
+		return PriceRoomType();
 	}
 }
 
@@ -188,7 +190,7 @@ void Dictionary_Price::print()
 			while (tempNode != NULL)
 			{
 				count++;
-				cout << "[" << count << "] " << tempNode->key << " ($" << tempNode->item << ")" << endl;
+				cout << "[" << count << "] " << tempNode->key << " ($" << tempNode->item.price << ")" << endl;
 				tempNode = tempNode->next;
 			}
 		}

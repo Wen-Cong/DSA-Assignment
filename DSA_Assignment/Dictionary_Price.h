@@ -4,9 +4,15 @@
 #include<iostream>
 using namespace std;
 
-const int PRICE_MAX_SIZE = 7;
+const int PRICE_MAX_SIZE = 5;
+
+struct PriceRoomType
+{
+	int count;
+	double price;
+};
 typedef string PriceKeyType;
-typedef double PriceType;
+typedef struct PriceRoomType PriceType;
 
 
 class Dictionary_Price

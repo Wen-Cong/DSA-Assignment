@@ -51,6 +51,66 @@ BinaryNode* BST_Booking::search(BinaryNode* t, ItemType target)
 	}
 }
 
+// search for range of items in the binary search tree and return count
+int BST_Booking::searchRange(tm checkin, tm checkout, string roomType)
+{
+	return searchRange(root, checkin, checkout, roomType);
+}
+
+int BST_Booking::searchRange(BinaryNode* root, tm checkin, tm checkout, string roomType)
+{
+	if (root == NULL)
+	{
+		//base case: the tree is empty, we can return 0
+		return 0;
+	}
+	else
+	{
+		// our tree is not empty.
+		int countLeftOccupiedRooms = searchRange(root->left, checkin, checkout, roomType);
+		int countRightOccupiedRooms = searchRange(root->right, checkin, checkout, roomType);
+
+		// Get and format all time data for comparison
+		tm bookingCheckIn = root->item.getCheckIn();
+		tm bookingCheckOut = root->item.getCheckOut();
+		tm tempCheckIn = checkin;
+		tm tempCheckOut = checkout;
+		//Comparing time the year have to be the no. of years different from 1900
+		bookingCheckIn.tm_year -= 1900;
+		bookingCheckOut.tm_year -= 1900;
+		tempCheckIn.tm_year -= 1900;
+		tempCheckOut.tm_year -= 1900;
+
+		// Set condition to determine if room is occupied or booked
+		/*Checkout date for bookings that are currently in checked in status
+		  is more than check in date entered by customer. Hence, room is unavailable*/
+		bool isRoomOccupied = root->item.getStatus() == "Checked In" 
+						   && root->item.getRoom().getType() == roomType
+						   && difftime(mktime(&bookingCheckOut), mktime(&tempCheckIn)) > 0; // booking check out date is more than check in date entered by customer
+		
+
+		/*If booking check-in date or booking check-out date is within date range input by user
+		and status is booked, then room is unavailable.*/
+		bool isRoomBooked = root->item.getStatus() == "Booked"
+			&& root->item.getRoom().getType() == roomType
+			&& (
+				(difftime(mktime(&bookingCheckIn), mktime(&tempCheckIn)) >= 0 // booking check in date is more than check in date entered by customer
+					&& difftime(mktime(&bookingCheckIn), mktime(&tempCheckOut)) < 0) // booking check in date is less than check out date entered by customer
+				|| (difftime(mktime(&bookingCheckOut), mktime(&tempCheckIn)) > 0 // booking check out date is more than check in date entered by customer
+					&& difftime(mktime(&bookingCheckOut), mktime(&tempCheckOut)) <= 0)); // booking check out date is less than check out date entered by customer
+
+		if (isRoomOccupied || isRoomBooked)
+		{
+			/* 1 more room of this room type is unavailable based on the date range given: we will count it */
+			return 1 + countLeftOccupiedRooms + countRightOccupiedRooms;
+		}
+		else
+		{
+			return countLeftOccupiedRooms + countRightOccupiedRooms;
+		}
+	}
+}
+
 // insert an item to the binary search tree
 void BST_Booking::insert(ItemType item)
 {
@@ -61,11 +121,11 @@ void BST_Booking::insert(BinaryNode*& t, ItemType item)
 {
 	if (t == NULL)
 	{
-		BinaryNode* newNode = new BinaryNode;
-		newNode->item = item;
-		newNode->left = NULL;
-		newNode->right = NULL;
-		t = newNode;
+		BinaryNode* newroot = new BinaryNode;
+		newroot->item = item;
+		newroot->left = NULL;
+		newroot->right = NULL;
+		t = newroot;
 	}
 	else {
 
@@ -74,7 +134,7 @@ void BST_Booking::insert(BinaryNode*& t, ItemType item)
 		compare.tm_year -= 1900;
 		tm temp = item.getCheckIn();
 		temp.tm_year -= 1900;
-		//if difftime > 1 temp is earlier
+		//if difftime > 0, temp is earlier
 		if (difftime(mktime(&compare), mktime(&temp)) > 0)
 			insert(t->left, item);  // insert in left subtree
 		else
@@ -147,7 +207,7 @@ bool BST_Booking::isEmpty()
 	return (root == NULL);
 }
 
-// count the number of nodes in the binary search tree
+// count the number of roots in the binary search tree
 int BST_Booking::countNodes()
 {
 	return countNodes(root);
@@ -194,10 +254,10 @@ bool BST_Booking::isBalanced(BinaryNode* t)
 	{
 		int leftHeight = getHeight(t->left);	// height of left sub-tree
 		int rightHeight = getHeight(t->right);	// height of right sub-tree
-		bool isBalancedNode = (abs(leftHeight - rightHeight) <= 1);
+		bool isBalancedroot = (abs(leftHeight - rightHeight) <= 1);
 		bool isBalancedLeft = isBalanced(t->left);
 		bool isBalancedRight = isBalanced(t->right);
-		return (isBalancedNode && isBalancedLeft && isBalancedRight);
+		return (isBalancedroot && isBalancedLeft && isBalancedRight);
 	}
 }
 
@@ -225,43 +285,43 @@ void BST_Booking::remove(BinaryNode*& t, ItemType item)
 			remove(t->right, item);
 		else						// item == t->item (found) - base case
 		{
-			if (t->left == NULL && t->right == NULL) // case 1 : node has 0 child
+			if (t->left == NULL && t->right == NULL) // case 1 : root has 0 child
 			{
 				BinaryNode* temp = t;	// to be deleted
 				t = NULL;
-				delete temp;			// delete the node
+				delete temp;			// delete the root
 			}
-			else if (t->left == NULL)	// case 2 : node has 1 child
+			else if (t->left == NULL)	// case 2 : root has 1 child
 			{
-				BinaryNode* temp = t;	// node to be deleted
+				BinaryNode* temp = t;	// root to be deleted
 
-				if (t == root)			// current node is root
+				if (t == root)			// current root is root
 					root = t->right;
 				else
 					t = t->right;
 
-				delete temp;			// delete the node
+				delete temp;			// delete the root
 			}
-			else if (t->right == NULL)	// case 2 : node has 1 child
+			else if (t->right == NULL)	// case 2 : root has 1 child
 			{
-				BinaryNode* temp = t;	// node to be deleted
+				BinaryNode* temp = t;	// root to be deleted
 
-				if (t == root)			// current node is root
+				if (t == root)			// current root is root
 					root = t->left;
 				else
 					t = t->left;
 
-				delete temp;			// delete the node
+				delete temp;			// delete the root
 			}
-			else // case 3 : node has 2 children
+			else // case 3 : root has 2 children
 			{
 				BinaryNode* successor = t->left;
-				while (successor->right != NULL)	// search for right most node in left sub-tree
+				while (successor->right != NULL)	// search for right most root in left sub-tree
 					successor = successor->right;
 
 				ItemType item = successor->item;
 				remove(t->left, item);				// delete the successor (either case 1 or case 2)
-				t->item = item;						// replace the node’s item with that of the successor
+				t->item = item;						// replace the root’s item with that of the successor
 			}
 		}
 	}

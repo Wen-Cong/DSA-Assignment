@@ -55,6 +55,10 @@ int main()
             string checkIn;
             string checkOut;
             string roomTypeChoice;
+            string guestName;
+            string numOfGuest;
+            string specReq;
+
             cout << "\n===================== ADD BOOKING =====================\n";
             // Display all rooms type and respective price tags
             priceList.print();
@@ -69,6 +73,49 @@ int main()
             tm in = toDateTime(checkIn);
             tm out = toDateTime(checkOut);
             string roomType = convertOptionToRoomTypeName(roomTypeChoice);
+
+            // Check availability of room based on room type, check in date and check out date.
+            int numOfRoomsOccupied = bookingList.searchRange(in, out, roomType);
+            int totalNumOfRoom = priceList.get(roomType).count;
+            // All rooms of selected type are occupied or booked during this date range
+            if (numOfRoomsOccupied == totalNumOfRoom) 
+            {
+                cout << endl << roomType << " rooms are fully occupied during selected time.\n";
+                cout << "Please choose another date or room. Thank You!\n\n";
+                continue;
+            }
+
+            // Prompt user for guest name, number of guest and special request
+            cout << "Please Enter Name of Representative: ";
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            getline(cin, guestName);
+            cout << "Please Enter the Number of Guest: ";
+            cin >> numOfGuest;
+            cout << "Please Enter Special Request (If any): ";
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            getline(cin, specReq);
+
+            // Get current date time to be set as booking time
+            time_t t = time(0); // get current time
+            tm now = tm();
+            localtime_s(&now, &t); // Convert to tm type
+
+            // Get new booking id for latest booking added
+            int bookingId = bookingList.countNodes() + 1;
+
+            // Set price and room type into room object to be added to booking object
+            Room r = Room();
+            r.setPrice(priceList.get(roomType).price);
+            r.setType(roomType);
+
+            // Define status and convert number of guest to int to be added to booking object
+            int guestNum = toInt(numOfGuest);
+            string status = "Booked";
+            Booking b = Booking(bookingId, now, guestName, r, status, in, out, guestNum, specReq);
+
+            // Insert data into booking list
+            bookingList.insert(b);
+            // TO-DO: Insert data into Excel file
         }
 
         else if (choice == "3")
@@ -100,19 +147,10 @@ tm toDateTime(string dateString) {
     // Convert string to tm type
     tm date = tm();
     // Date time with hour and minute parameter
-    if (dateString.length() == 16) {
-        char aString[17];
-        strcpy_s(aString, dateString.c_str());
-        sscanf_s(aString, "%d/%d/%4d  %d:%d",
-            &date.tm_mday, &date.tm_mon, &date.tm_year, &date.tm_hour, &date.tm_min);
-    }
-    // Date time with only day, month and year
-    else if (dateString.length() == 10) {
-        char aString[11];
-        strcpy_s(aString, dateString.c_str());
-        sscanf_s(aString, "%d/%d/%4d",
-            &date.tm_mday, &date.tm_mon, &date.tm_year);
-    }
+    char aString[17];
+    strcpy_s(aString, dateString.c_str());
+    sscanf_s(aString, "%d/%d/%4d  %d:%d",
+        &date.tm_mday, &date.tm_mon, &date.tm_year, &date.tm_hour, &date.tm_min);
 
     return date;
 }
@@ -145,9 +183,15 @@ void initRoomData(Dictionary_Room& roomList, Dictionary_Price& priceList) {
             // Convert string to double for price
             double price = stod(roomPrice);
 
+            // Append to room list
             Room r = Room(roomNum, roomType, price);
             roomList.add(roomNum, r);
-            priceList.add(roomType, price);
+
+            // Append to price list
+            PriceRoomType rt = PriceRoomType();
+            rt.price = price;
+            rt.count = 1;
+            priceList.add(roomType, rt);
         }
     }
 
@@ -212,7 +256,7 @@ void initBookingData(BST_Booking& bookingList, Dictionary_Room roomList, Diction
             Room bookedRoom = roomList.get(roomNum);
             if (bookedRoom.getRoomNum() == NULL) {
                 // Find price for room type retrieve set room price for bookedRoom
-                double price = priceList.get(bRoomType);
+                double price = priceList.get(bRoomType).price;
                 // Set price and room type into room object
                 bookedRoom.setType(bRoomType);
                 bookedRoom.setPrice(price);
@@ -240,11 +284,11 @@ void displayMainMenu() {
 string convertOptionToRoomTypeName(string opt) {
     if (opt == "1")
     {
-        return "Executive Sea View";
+        return "President Suite";
     }
     else if (opt == "2")
     {
-        return "President Suite";
+        return "Standard City View";
     }
 
     else if (opt == "3")
@@ -253,7 +297,7 @@ string convertOptionToRoomTypeName(string opt) {
     }
     else if (opt == "4")
     {
-        return "Standard City View";
+        return "Executive Sea View";
     }
     else
     {

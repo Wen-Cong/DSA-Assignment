@@ -28,6 +28,10 @@ public:
 	BinaryNode* search(ItemType target);
 	BinaryNode* search(BinaryNode* root, ItemType target);
 
+	// search for range of items in the binary search tree and return count
+	int searchRange(tm checkin, tm checkout, string roomType);
+	int searchRange(BinaryNode* root, tm checkin, tm checkout, string roomType);
+
 	// insert an item to the binary search tree
 	void insert(ItemType item);
 	void insert(BinaryNode*& root, ItemType item);
