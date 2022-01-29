@@ -16,12 +16,15 @@
 #include "Booking.h"
 using namespace std;
 
+
 int toInt(string text);
 tm toDateTime(string dateString);
+string fromDateTime(tm date);
 void initRoomData(Dictionary_Room& roomList, Dictionary_Price& priceList);
 void initBookingData(BST_Booking& bookingList, Dictionary_Room roomList, Dictionary_Price priceList);
 void displayMainMenu();
 string convertOptionToRoomTypeName(string opt);
+bool addNewBooking(BST_Booking& bookingList, Booking b);
 
 int main()
 {
@@ -84,6 +87,9 @@ int main()
                 cout << "Please choose another date or room. Thank You!\n\n";
                 continue;
             }
+            else {
+                cout << "\nAvailable Rooms Found.\n\n";
+            }
 
             // Prompt user for guest name, number of guest and special request
             cout << "Please Enter Name of Representative: ";
@@ -99,6 +105,8 @@ int main()
             time_t t = time(0); // get current time
             tm now = tm();
             localtime_s(&now, &t); // Convert to tm type
+            now.tm_year += 1900; // Convert from year since 1900 to human readable year
+            now.tm_mon++; // Month generated would be indexed starting from 0, hence add 1 to make it human readable
 
             // Get new booking id for latest booking added
             int bookingId = bookingList.countNodes() + 1;
@@ -113,9 +121,11 @@ int main()
             string status = "Booked";
             Booking b = Booking(bookingId, now, guestName, r, status, in, out, guestNum, specReq);
 
-            // Insert data into booking list
-            bookingList.insert(b);
-            // TO-DO: Insert data into Excel file
+            // Add new booking created to book list and update Excel file
+            addNewBooking(bookingList, b);
+            // Display sucess message upon new booking added
+            cout << endl << "Your booking has been created successfully!\n\n";
+
         }
 
         else if (choice == "3")
@@ -153,6 +163,19 @@ tm toDateTime(string dateString) {
         &date.tm_mday, &date.tm_mon, &date.tm_year, &date.tm_hour, &date.tm_min);
 
     return date;
+}
+
+string fromDateTime(tm date) {
+    // Convert tm type to string in (dd/mm/yyyy) format
+    string dateStr = "";
+    // Append year, month and day
+    dateStr = to_string(date.tm_mday) + "/" + to_string(date.tm_mon) + "/" + to_string(date.tm_year);
+    // If hour and minute is found, append hour and minute
+    if (date.tm_hour != NULL && date.tm_min != NULL) {
+        dateStr += " " + to_string(date.tm_hour) + ":" + to_string(date.tm_min);
+    }
+
+    return dateStr;
 }
 
 void initRoomData(Dictionary_Room& roomList, Dictionary_Price& priceList) {
@@ -304,4 +327,32 @@ string convertOptionToRoomTypeName(string opt) {
         cout << "Invalid Option\n\n";
         return "";
     }
+}
+
+bool addNewBooking(BST_Booking& bookingList, Booking b) {
+    // Insert data into booking list
+    bookingList.insert(b);
+    // Insert data into Excel file
+    ofstream csvFile;
+    // Open Bookings csv File in append mode
+    csvFile.open("Bookings.csv", ios::app);
+    // Check if file open successfully
+    if (csvFile.is_open()) {
+        // Convert data to string
+        string inStr = fromDateTime(b.getCheckIn());
+        string outStr = fromDateTime(b.getCheckOut());
+        string bDateStr = fromDateTime(b.getDate());
+        string roomNumStr = "";
+        if (b.getRoom().getRoomNum() >= 0)
+            roomNumStr = "Room " + to_string(b.getRoom().getRoomNum());
+
+        // Write new row into booking csv file
+        csvFile << b.getId() << ", " << bDateStr << ", " << b.getGuestName() << ", " << roomNumStr << ", ";
+        csvFile << b.getRoom().getType() << ", " << b.getStatus() << ", " << inStr << ", " << outStr << ", ";
+        csvFile << b.getNumOfGuest() << ", " << b.getRequest() << endl;
+    }
+    // Close file
+    csvFile.close();
+
+    return true;
 }
