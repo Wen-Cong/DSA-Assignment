@@ -54,7 +54,7 @@ int main()
 
         else if (choice == "2")
         {
-            // Add booking Use Case
+            // Add and save a new booking for the hotel
             string checkIn;
             string checkOut;
             string roomTypeChoice;
@@ -77,18 +77,26 @@ int main()
             tm out = toDateTime(checkOut);
             string roomType = convertOptionToRoomTypeName(roomTypeChoice);
 
+            // Set price and room type into room object to be added to booking object
+            Room r = Room();
+            r.setPrice(priceList.get(roomType).price);
+            r.setType(roomType);
+
+            Booking targetBooking = Booking(r, in, out); // This booking will only be used to check for availability
+            BST_Booking occupiedBookings;
+
             // Check availability of room based on room type, check in date and check out date.
-            int numOfRoomsOccupied = bookingList.searchRange(in, out, roomType);
             int totalNumOfRoom = priceList.get(roomType).count;
+            bookingList.overlapSearch(targetBooking, occupiedBookings);
             // All rooms of selected type are occupied or booked during this date range
-            if (numOfRoomsOccupied == totalNumOfRoom) 
+            if (occupiedBookings.countNodes() >= totalNumOfRoom)
             {
                 cout << endl << roomType << " rooms are fully occupied during selected time.\n";
                 cout << "Please choose another date or room. Thank You!\n\n";
                 continue;
             }
             else {
-                cout << "\nAvailable Rooms Found.\n\n";
+                cout << "\nAvailable Rooms Found!\n\n";
             }
 
             // Prompt user for guest name, number of guest and special request
@@ -105,16 +113,9 @@ int main()
             time_t t = time(0); // get current time
             tm now = tm();
             localtime_s(&now, &t); // Convert to tm type
-            now.tm_year += 1900; // Convert from year since 1900 to human readable year
-            now.tm_mon++; // Month generated would be indexed starting from 0, hence add 1 to make it human readable
 
             // Get new booking id for latest booking added
             int bookingId = bookingList.countNodes() + 1;
-
-            // Set price and room type into room object to be added to booking object
-            Room r = Room();
-            r.setPrice(priceList.get(roomType).price);
-            r.setType(roomType);
 
             // Define status and convert number of guest to int to be added to booking object
             int guestNum = toInt(numOfGuest);
@@ -135,7 +136,8 @@ int main()
 
         else if (choice == "4")
         {
-            // TO DO
+            // TO DO: Display for a particular month, the dates that each room is occupied
+
         }
 
         else
@@ -162,14 +164,18 @@ tm toDateTime(string dateString) {
     sscanf_s(aString, "%d/%d/%4d  %d:%d",
         &date.tm_mday, &date.tm_mon, &date.tm_year, &date.tm_hour, &date.tm_min);
 
+    // Convert to year since 1900 for tm_year and 0-indexed format for tm_mon
+    date.tm_year -= 1900;
+    date.tm_mon--;
+
     return date;
 }
 
 string fromDateTime(tm date) {
     // Convert tm type to string in (dd/mm/yyyy) format
     string dateStr = "";
-    // Append year, month and day
-    dateStr = to_string(date.tm_mday) + "/" + to_string(date.tm_mon) + "/" + to_string(date.tm_year);
+    // Append year, month and day in human readable format
+    dateStr = to_string(date.tm_mday) + "/" + to_string(date.tm_mon + 1) + "/" + to_string(date.tm_year + 1900);
     // If hour and minute is found, append hour and minute
     if (date.tm_hour != NULL && date.tm_min != NULL) {
         dateStr += " " + to_string(date.tm_hour) + ":" + to_string(date.tm_min);
@@ -200,6 +206,11 @@ void initRoomData(Dictionary_Room& roomList, Dictionary_Price& priceList) {
             getline(inputFile, roomNumberString, ',');
             getline(inputFile, roomType, ',');
             getline(inputFile, roomPrice);
+
+            // If Room Number not found then skip this row to ensure quality data (File Validation)
+            if (roomNumberString == "") {
+                continue;
+            }
 
             // Remove the first 4 char "Room" and convert reamining char from string to integer
             int roomNum = toInt(roomNumberString.erase(0, 4));
@@ -266,6 +277,11 @@ void initBookingData(BST_Booking& bookingList, Dictionary_Room roomList, Diction
             getline(inputFile, bGuestNum, ',');
             getline(inputFile, bReq);
 
+            // If booking ID not found then skip this row to ensure quality data (File Validation)
+            if (bId == "") {
+                continue;
+            }
+
             // Remove the first 4 char "Room" and convert reamining char from string to integer
             int roomNum = toInt(bRoomNumber.erase(0, 4));
             // Convert booking ID and Number of Guest to int
@@ -277,7 +293,8 @@ void initBookingData(BST_Booking& bookingList, Dictionary_Room roomList, Diction
             tm out = toDateTime(bOut);
             // Get room item from room list using room number
             Room bookedRoom = roomList.get(roomNum);
-            if (bookedRoom.getRoomNum() == NULL) {
+            // Room number is not assigned to this booking yet, create a room object without room number first
+            if (bookedRoom.getRoomNum() < 0) {
                 // Find price for room type retrieve set room price for bookedRoom
                 double price = priceList.get(bRoomType).price;
                 // Set price and room type into room object
@@ -347,9 +364,9 @@ bool addNewBooking(BST_Booking& bookingList, Booking b) {
             roomNumStr = "Room " + to_string(b.getRoom().getRoomNum());
 
         // Write new row into booking csv file
-        csvFile << b.getId() << ", " << bDateStr << ", " << b.getGuestName() << ", " << roomNumStr << ", ";
-        csvFile << b.getRoom().getType() << ", " << b.getStatus() << ", " << inStr << ", " << outStr << ", ";
-        csvFile << b.getNumOfGuest() << ", " << b.getRequest() << endl;
+        csvFile << b.getId() << "," << bDateStr << "," << b.getGuestName() << "," << roomNumStr << ",";
+        csvFile << b.getRoom().getType() << "," << b.getStatus() << "," << inStr << "," << outStr << ",";
+        csvFile << b.getNumOfGuest() << "," << b.getRequest() << endl;
     }
     // Close file
     csvFile.close();

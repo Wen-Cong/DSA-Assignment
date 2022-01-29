@@ -6,8 +6,17 @@
 //============================================================
 
 #include "Booking.h";
+#include <iostream>
+using namespace std;
 
 Booking::Booking() {}
+
+Booking::Booking(Room room, tm in, tm out) 
+{
+	this->room = room;
+	this->checkIn = in;
+	this->checkOut = out;
+}
 
 Booking::Booking(int id, tm date, string guestName, Room room, string status, tm in, tm out, int guestNum, string req)
 {
@@ -105,4 +114,17 @@ void Booking::setRequest(string req)
 string Booking::getRequest()
 {
 	return specialRequest;
+}
+
+void Booking::print()
+{
+	cout << "Booking ID: " << id << endl;
+	cout << "Guest Name: " << guestName << endl;
+	cout << "Room Number: " << room.getRoomNum() << endl;
+	cout << "Room Type: " << room.getType() << endl;
+	cout << "Status: " << status << endl;
+	cout << "Date :" << date.tm_mday << "/" << date.tm_mon + 1 << "/" << date.tm_year + 1900 << " " << date.tm_hour << ":" << date.tm_min << endl;
+	cout << "Check In :" << checkIn.tm_mday << "/" << checkIn.tm_mon + 1 << "/" << checkIn.tm_year + 1900 << endl;
+	cout << "Check Out :" << checkOut.tm_mday << "/" << checkOut.tm_mon + 1 << "/" << checkOut.tm_year + 1900 << endl;
+	cout << endl;
 }

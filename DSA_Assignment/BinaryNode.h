@@ -14,4 +14,6 @@ struct BinaryNode
 	ItemType   item;	// data item
 	BinaryNode* left;	// pointer pointing to left subtree
 	BinaryNode* right;	// pointer pointing to right subtree
+	tm min;				// Minimum low value of children
+	tm max;				// Maximum high value of children
 };

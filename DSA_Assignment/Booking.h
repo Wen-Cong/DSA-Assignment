@@ -25,6 +25,7 @@ private:
 
 public:
     Booking();
+    Booking(Room room, tm in, tm out);
     Booking(int id, tm date, string guestName, Room room, string status, tm in, tm out, int guestNum, string req);
     int getId();
     void setDate(tm d);
@@ -43,4 +44,5 @@ public:
     int getNumOfGuest();
     void setRequest(string req);
     string getRequest();
+    void print();
 };

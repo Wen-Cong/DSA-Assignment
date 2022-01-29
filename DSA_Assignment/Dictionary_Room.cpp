@@ -118,6 +118,7 @@ void Dictionary_Room::remove(RoomKeyType key)
 
 RoomType Dictionary_Room::get(RoomKeyType key)
 {
+	Room r = Room();
 	if (!isEmpty())
 	{
 		int index = this->hash(key);
@@ -133,16 +134,16 @@ RoomType Dictionary_Room::get(RoomKeyType key)
 				tempNode = tempNode->next;
 			}
 
-			return Room();
+			return r;
 		}
 		else
 		{
-			return Room();
+			return r;
 		}
 	}
 	else
 	{
-		return Room();
+		return r;
 	}
 }
 

@@ -75,11 +75,6 @@ int BST_Booking::searchRange(BinaryNode* root, tm checkin, tm checkout, string r
 		tm bookingCheckOut = root->item.getCheckOut();
 		tm tempCheckIn = checkin;
 		tm tempCheckOut = checkout;
-		//Comparing time the year have to be the no. of years different from 1900
-		bookingCheckIn.tm_year -= 1900;
-		bookingCheckOut.tm_year -= 1900;
-		tempCheckIn.tm_year -= 1900;
-		tempCheckOut.tm_year -= 1900;
 
 		// Set condition to determine if room is occupied or booked
 		/*Checkout date for bookings that are currently in checked in status
@@ -111,6 +106,57 @@ int BST_Booking::searchRange(BinaryNode* root, tm checkin, tm checkout, string r
 	}
 }
 
+// Check if given two booking have overlapping check-in and check-out date range
+bool isOverlapped(ItemType b1, ItemType b2)
+{
+	tm b1In = b1.getCheckIn();
+	tm b1Out = b1.getCheckOut();
+	tm b2In = b2.getCheckIn();
+	tm b2Out = b2.getCheckOut();
+
+	if ((difftime(mktime(&b1In), mktime(&b2Out)) < 0) &&
+		(difftime(mktime(&b2In), mktime(&b1Out)) < 0))
+		return true;
+	return false;
+}
+
+void BST_Booking::overlapSearch(Booking b, BST_Booking& bookingList)
+{
+	return overlapSearch(root, b, bookingList);
+}
+
+void BST_Booking::overlapSearch(BinaryNode* root, Booking b, BST_Booking& bookingList)
+{
+	// Base Case
+	if (root == NULL) 
+		return;
+
+	// If given booking check in and check out date overlaps with root check in and check out date
+	if (isOverlapped(root->item, b) && 
+		b.getRoom().getType() == root->item.getRoom().getType() &&
+		root->item.getStatus() != "Checked Out"
+		) {
+		bookingList.insert(root->item);
+	}
+
+	tm bookingCheckIn = b.getCheckIn();
+	tm bookingCheckOut = b.getCheckOut();
+
+	// If left child of root is present and max of left child is
+	// greater than check in time of given booking, 
+	// then there are some rooms occupied during the given check in and check out time
+	if (root->left != NULL && difftime(mktime(&root->left->max), mktime(&bookingCheckIn)) > 0)
+		overlapSearch(root->left, b, bookingList);
+
+	// If right child of root is present and min of right child is
+	// lesser than check out time of given booking, 
+	// then there are some rooms occupied during the given check in and check out time
+	if (root->right != NULL && difftime(mktime(&root->right->min), mktime(&bookingCheckOut)) < 0)
+		overlapSearch(root->right, b, bookingList);
+
+	return;
+}
+
 // insert an item to the binary search tree
 void BST_Booking::insert(ItemType item)
 {
@@ -125,20 +171,32 @@ void BST_Booking::insert(BinaryNode*& t, ItemType item)
 		newroot->item = item;
 		newroot->left = NULL;
 		newroot->right = NULL;
+		newroot->min = item.getCheckIn();
+		newroot->max = item.getCheckOut();
 		t = newroot;
 	}
 	else {
-
 		//Comparing time the year have to be the no. of years different from 1900
-		tm compare = t->item.getCheckIn();
-		compare.tm_year -= 1900;
-		tm temp = item.getCheckIn();
-		temp.tm_year -= 1900;
+		tm compareIn = t->item.getCheckIn();
+		tm compareMax = t->max;
+		tm compareMin = t->min;
+		tm tempIn = item.getCheckIn();
+		tm tempOut = item.getCheckOut();
+
+		// Update the max value of this ancestor if needed
+		if (difftime(mktime(&tempOut), mktime(&compareMax)) > 0)
+			t->max = item.getCheckOut();
+
+		// Update the min value of this ancestor if needed
+		if (difftime(mktime(&compareMin), mktime(&tempIn)) > 0)
+			t->min = item.getCheckIn();
+
 		//if difftime > 0, temp is earlier
-		if (difftime(mktime(&compare), mktime(&temp)) > 0)
+		if (difftime(mktime(&compareIn), mktime(&tempIn)) > 0)
 			insert(t->left, item);  // insert in left subtree
 		else
 			insert(t->right, item); // insert in right subtree	
+
 	}
 
 	t = balance(t);				// balance the tree (AVL Tree function)
@@ -159,7 +217,7 @@ void BST_Booking::inorder(BinaryNode* t)
 	if (t != NULL)
 	{
 		inorder(t->left);
-		cout << t->item.getId() << endl;
+		t->item.print();
 		inorder(t->right);
 	}
 }
@@ -176,7 +234,7 @@ void BST_Booking::preorder(BinaryNode* t)
 {
 	if (t != NULL)
 	{
-		cout << t->item.getId() << endl;
+		t->item.print();
 		preorder(t->left);
 		preorder(t->right);
 	}
@@ -197,7 +255,7 @@ void BST_Booking::postorder(BinaryNode* t)
 	{
 		postorder(t->left);
 		postorder(t->right);
-		cout << t->item.getId() << endl;
+		t->item.print();
 	}
 }
 

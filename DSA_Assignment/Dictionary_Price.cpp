@@ -138,6 +138,7 @@ void Dictionary_Price::remove(PriceKeyType key)
 
 PriceType Dictionary_Price::get(PriceKeyType key)
 {
+	PriceRoomType pr = PriceRoomType();
 	if (!isEmpty())
 	{
 		int index = (this->hash(key)) % PRICE_MAX_SIZE;
@@ -153,16 +154,16 @@ PriceType Dictionary_Price::get(PriceKeyType key)
 				tempNode = tempNode->next;
 			}
 
-			return PriceRoomType();
+			return pr;
 		}
 		else
 		{
-			return PriceRoomType();
+			return pr;
 		}
 	}
 	else
 	{
-		return PriceRoomType();
+		return pr;
 	}
 }
 

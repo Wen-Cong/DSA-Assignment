@@ -32,6 +32,10 @@ public:
 	int searchRange(tm checkin, tm checkout, string roomType);
 	int searchRange(BinaryNode* root, tm checkin, tm checkout, string roomType);
 
+	// Search for overlapping check in and check out dates for bookings
+	void overlapSearch(Booking b, BST_Booking& bookingList);
+	void overlapSearch(BinaryNode* root, Booking b, BST_Booking& bookingList);
+
 	// insert an item to the binary search tree
 	void insert(ItemType item);
 	void insert(BinaryNode*& root, ItemType item);
