@@ -20,9 +20,11 @@ using namespace std;
 int toInt(string text);
 tm toDateTime(string dateString);
 string fromDateTime(tm date);
+int getMaxDay(int month, int year);
 void initRoomData(Dictionary_Room& roomList, Dictionary_Price& priceList);
 void initBookingData(BST_Booking& bookingList, Dictionary_Room roomList, Dictionary_Price priceList);
 void displayMainMenu();
+void displayAllMonths();
 string convertOptionToRoomTypeName(string opt);
 bool addNewBooking(BST_Booking& bookingList, Booking b);
 
@@ -87,7 +89,7 @@ int main()
 
             // Check availability of room based on room type, check in date and check out date.
             int totalNumOfRoom = priceList.get(roomType).count;
-            bookingList.overlapSearch(targetBooking, occupiedBookings);
+            bookingList.overlapSearch(targetBooking, occupiedBookings, "roomType");
             // All rooms of selected type are occupied or booked during this date range
             if (occupiedBookings.countNodes() >= totalNumOfRoom)
             {
@@ -136,8 +138,29 @@ int main()
 
         else if (choice == "4")
         {
+            string month;
+            string year;
             // TO DO: Display for a particular month, the dates that each room is occupied
+            cout << "\n===================== DISPLAY OCCUPIED DATES OF ROOMS =====================\n";
+            cout << "Please Enter Year: ";
+            cin >> year;
+            displayAllMonths();
+            cout << "Please Choose a Month: ";
+            cin >> month;
 
+            string startStr = "01/" + month + "/" + year;
+            string endStr = to_string(getMaxDay((toInt(month) - 1), toInt(year))) + "/" + month + "/" + year;
+            tm start = toDateTime(startStr);
+            tm end = toDateTime(endStr);
+
+            Booking targetBooking = Booking(); // This booking will only be used to check for availability
+            targetBooking.setCheckIn(start); // Set range start
+            targetBooking.setCheckOut(end); // Set range end
+            BST_Booking occupiedBookings;
+            // Search all bookings that occupies a room within given date range
+            bookingList.overlapSearch(targetBooking, occupiedBookings, "haveRoom");
+
+            occupiedBookings.inorder();
         }
 
         else
@@ -182,6 +205,25 @@ string fromDateTime(tm date) {
     }
 
     return dateStr;
+}
+
+
+int getMaxDay(int month, int year) {
+    if (month == 0 || month == 2 || month == 4 || month == 6 || month == 7 || month == 9 || month == 11)
+        return 31;
+    else if (month == 3 || month == 5 || month == 8 || month == 10)
+        return 30;
+    else {
+        if (year % 4 == 0) {
+            if (year % 100 == 0) {
+                if (year % 400 == 0)
+                    return 29;
+                return 28;
+            }
+            return 29;
+        }
+        return 28;
+    }
 }
 
 void initRoomData(Dictionary_Room& roomList, Dictionary_Price& priceList) {
@@ -317,8 +359,24 @@ void displayMainMenu() {
     cout << "[2] Add Booking\n";
     cout << "[3] Display Staying Guest by Date\n";
     cout << "[4] Display Occupied Rooms by Month\n";
-    cout << "[0] Exit\n";
+    cout << "[0] Exit\n\n";
     cout << "Your Choice: ";
+}
+
+void displayAllMonths() {
+    cout << "[1] January\n";
+    cout << "[2] Febuary\n";
+    cout << "[3] March\n";
+    cout << "[4] April\n";
+    cout << "[5] May\n";
+    cout << "[6] June\n";
+    cout << "[7] July\n";
+    cout << "[8] August\n";
+    cout << "[9] September\n";
+    cout << "[10] October\n";
+    cout << "[11] November\n";
+    cout << "[12] December\n\n";
+    cout << "[0] Back\n\n";
 }
 
 string convertOptionToRoomTypeName(string opt) {

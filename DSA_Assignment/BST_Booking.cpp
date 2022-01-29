@@ -120,22 +120,31 @@ bool isOverlapped(ItemType b1, ItemType b2)
 	return false;
 }
 
-void BST_Booking::overlapSearch(Booking b, BST_Booking& bookingList)
+void BST_Booking::overlapSearch(Booking b, BST_Booking& bookingList, string query)
 {
-	return overlapSearch(root, b, bookingList);
+	return overlapSearch(root, b, bookingList, query);
 }
 
-void BST_Booking::overlapSearch(BinaryNode* root, Booking b, BST_Booking& bookingList)
+void BST_Booking::overlapSearch(BinaryNode* root, Booking b, BST_Booking& bookingList, string query)
 {
 	// Base Case
 	if (root == NULL) 
 		return;
 
-	// If given booking check in and check out date overlaps with root check in and check out date
-	if (isOverlapped(root->item, b) && 
-		b.getRoom().getType() == root->item.getRoom().getType() &&
-		root->item.getStatus() != "Checked Out"
-		) {
+	// Enable dynamic conditions in run time based on query type passed in so that it can be used in multiple situation
+	bool matchedQuery = false;
+	// If given booking check in and check out date overlaps with root check in and check out date for the room type
+	if (query == "roomType") {
+		matchedQuery = isOverlapped(root->item, b) &&
+			b.getRoom().getType() == root->item.getRoom().getType() &&
+			root->item.getStatus() != "Checked Out";
+	}
+	// If given date range overlaps with check in and check out date of booking
+	else if (query == "haveRoom") {
+		matchedQuery = isOverlapped(root->item, b) && root->item.getRoom().getRoomNum() > 0;
+	}
+
+	if (matchedQuery) {
 		bookingList.insert(root->item);
 	}
 
@@ -146,13 +155,13 @@ void BST_Booking::overlapSearch(BinaryNode* root, Booking b, BST_Booking& bookin
 	// greater than check in time of given booking, 
 	// then there are some rooms occupied during the given check in and check out time
 	if (root->left != NULL && difftime(mktime(&root->left->max), mktime(&bookingCheckIn)) > 0)
-		overlapSearch(root->left, b, bookingList);
+		overlapSearch(root->left, b, bookingList, query);
 
 	// If right child of root is present and min of right child is
 	// lesser than check out time of given booking, 
 	// then there are some rooms occupied during the given check in and check out time
 	if (root->right != NULL && difftime(mktime(&root->right->min), mktime(&bookingCheckOut)) < 0)
-		overlapSearch(root->right, b, bookingList);
+		overlapSearch(root->right, b, bookingList, query);
 
 	return;
 }
