@@ -14,9 +14,16 @@ Dictionary_Price::Dictionary_Price()
 // destructor
 Dictionary_Price::~Dictionary_Price()
 {
-	for (int i = 0; i < PRICE_MAX_SIZE; i++)
-	{
-		items[i] = NULL;
+	for (int i = 0; i < PRICE_MAX_SIZE; i++) {
+		if (items[i] != NULL) {
+			Node* tempNode = items[i];
+			while (tempNode->next != NULL) {
+				items[i] = tempNode->next;
+				tempNode->next = NULL;
+				delete tempNode;
+				tempNode = items[i];
+			}
+		}
 	}
 }
 
@@ -37,19 +44,17 @@ int charvalue(char c)
 	return charval;
 }
 
-
+//why not a if else selection structure? Since there is only 5
 long long Dictionary_Price::hash(PriceKeyType key)
 {
-	string firstWord = key.substr(0, key.find(" "));
-	long long hashValue = 0;
-	for (int i = 0; i < firstWord.length(); i++)
-	{
-		char c = firstWord.at(i);
-		int charValue = charvalue(c);
-		hashValue = (hashValue * 53) + charValue;
+	int total = 0;
+	total += charvalue(key[0]);
+	total %= PRICE_MAX_SIZE;
+	for (int i = 1; i < key.size(); i++) {
+		total = total * 52 + charvalue(key[i]);
+		total %= PRICE_MAX_SIZE;
 	}
-
-	return hashValue;
+	return total;
 }
 
 
@@ -57,7 +62,7 @@ bool Dictionary_Price::add(PriceKeyType newKey, PriceType newItem)
 {
 	if (size < PRICE_MAX_SIZE)
 	{
-		int index = (this->hash(newKey)) % PRICE_MAX_SIZE;
+		int index = (this->hash(newKey));;
 		Node* newNode = new Node;
 		newNode->key = newKey;
 		newNode->item = newItem;
@@ -102,7 +107,7 @@ void Dictionary_Price::remove(PriceKeyType key)
 {
 	if (!isEmpty())
 	{
-		int index = (this->hash(key)) % PRICE_MAX_SIZE;
+		int index = (this->hash(key)); //
 		if (items[index] != NULL)
 		{
 			Node* tempNode = items[index];
@@ -141,7 +146,7 @@ PriceType Dictionary_Price::get(PriceKeyType key)
 	PriceRoomType pr = PriceRoomType();
 	if (!isEmpty())
 	{
-		int index = (this->hash(key)) % PRICE_MAX_SIZE;
+		int index = (this->hash(key));
 		if (items[index] != NULL)
 		{
 			Node* tempNode = items[index];
