@@ -53,7 +53,14 @@ BinaryNode* rotateLeft(BinaryNode* node)	// left rotation
 	// cout << "Rotate left" << endl;
 	BinaryNode *temp = node->right;
 	node->right = temp->left;
+	if (node->right == NULL) {
+		node->max = node->item.getCheckOut();
+	}
+	else {
+		node->max = node->right->max;
+	}
 	temp->left = node;
+	temp->min = node->min;
 	return temp;
 }
 
@@ -63,7 +70,16 @@ BinaryNode* rotateRight(BinaryNode* node)	// right rotation
 	// cout << "Rotate right" << endl;
 	BinaryNode *temp = node->left;
 	node->left = temp->right;
+	// update node min
+	if (node->left == NULL) {
+		node->min = node->item.getCheckIn();
+	}
+	else {
+		node->min = node->left->min;
+	}
 	temp->right = node;
+	// update max of temp
+	temp->max = node->max;
 	return temp;
 }
 
