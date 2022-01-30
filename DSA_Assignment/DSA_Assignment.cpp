@@ -10,7 +10,6 @@
 #include <sstream>
 #include "Room.h"
 #include "BST_Booking.h"
-#include "BST_Checkin.h"
 #include "Dictionary_Room.h"
 #include "Dictionary_Price.h"
 #include "Booking.h"
@@ -23,7 +22,7 @@ string fromDateTime(tm date);
 int getMaxDay(int month, int year);
 void initRoomData(Dictionary_Room& roomList, Dictionary_Price& priceList);
 void initBookingData(BST_Booking& bookingList, Dictionary_Room roomList, Dictionary_Price priceList);
-void displayMainMenu();
+void displayMainMenu(tm todayDate);
 void displayAllMonths();
 string convertOptionToRoomTypeName(string opt);
 bool addNewBooking(BST_Booking& bookingList, Booking b);
@@ -38,20 +37,36 @@ int main()
     initRoomData(roomList, priceList);
     initBookingData(bookingList, roomList, priceList);
 
+    //Setting up the start date of the application
+    tm todayDate = toDateTime("01/04/2021");
 
     string choice;
     while (choice != "0")
     {
         // Display main menu options
-        displayMainMenu();
-
+        displayMainMenu(todayDate);
         cin >> choice;
         if (choice == "0")
             break;
 
         else if (choice == "1")
         {
-            // TO DO
+            //string checkIn;
+            //tm dateInput;
+            ////Check in a guest using the booking information
+            //cout << "\n===================== Check In =====================\n";
+            //cout << "Today's Date: " << fromDateTime(todayDate) << endl;
+            //cout << "Please Enter Check In Date (dd/mm/yyyy): ";
+            //cin >> checkIn;
+            //dateInput = toDateTime(checkIn);
+            //// Guest are not allowed to check in, in the future.
+            //// Catches if user enter a date in the future
+            //if (difftime(mktime(&todayDate), mktime(&dateInput)) < 0) {
+            //    cout << "No check ins for future dates!" << endl;
+            //}
+            //else {
+            //    //Search for checkin date
+            //}
         }
 
         else if (choice == "2")
@@ -147,7 +162,8 @@ int main()
             displayAllMonths();
             cout << "Please Choose a Month: ";
             cin >> month;
-
+            //skip a line
+            cout << endl;
             string startStr = "01/" + month + "/" + year;
             string endStr = to_string(getMaxDay((toInt(month) - 1), toInt(year))) + "/" + month + "/" + year;
             tm start = toDateTime(startStr);
@@ -162,7 +178,18 @@ int main()
 
             occupiedBookings.inorder();
         }
-
+        else if (choice == "5") {
+            // This code is used to change the date of today
+            string dateEntered;
+            cout << "\n===================== Change Today's Date =====================\n";
+            cout << "Today's Date: " << fromDateTime(todayDate) << endl;
+            cout << endl;
+            cout << "Which date do you want to change to: ";
+            cin >> dateEntered;
+            cout << endl;
+            todayDate = toDateTime(dateEntered);
+            cout << "Date successfully changed!";
+        }
         else
         {
             cout << "Invalid Option\n\n";
@@ -353,30 +380,32 @@ void initBookingData(BST_Booking& bookingList, Dictionary_Room roomList, Diction
     inputFile.close();
 }
 
-void displayMainMenu() {
+void displayMainMenu(tm todayDate) {
     cout << "===================== MAIN MENU =====================\n";
+    cout << "Today's date is " << fromDateTime(todayDate) << endl;
     cout << "[1] Check In Guest\n";
     cout << "[2] Add Booking\n";
     cout << "[3] Display Staying Guest by Date\n";
     cout << "[4] Display Occupied Rooms by Month\n";
+    cout << "[5] Change Today's Date\n";
     cout << "[0] Exit\n\n";
     cout << "Your Choice: ";
 }
 
 void displayAllMonths() {
-    cout << "[1] January\n";
-    cout << "[2] Febuary\n";
-    cout << "[3] March\n";
-    cout << "[4] April\n";
-    cout << "[5] May\n";
-    cout << "[6] June\n";
-    cout << "[7] July\n";
-    cout << "[8] August\n";
-    cout << "[9] September\n";
+    cout << "[1]  January\n";
+    cout << "[2]  Febuary\n";
+    cout << "[3]  March\n";
+    cout << "[4]  April\n";
+    cout << "[5]  May\n";
+    cout << "[6]  June\n";
+    cout << "[7]  July\n";
+    cout << "[8]  August\n";
+    cout << "[9]  September\n";
     cout << "[10] October\n";
     cout << "[11] November\n";
     cout << "[12] December\n\n";
-    cout << "[0] Back\n\n";
+    cout << "[0]  Back\n\n";
 }
 
 string convertOptionToRoomTypeName(string opt) {
