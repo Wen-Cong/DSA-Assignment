@@ -37,6 +37,7 @@ int main()
     initRoomData(roomList, priceList);
     initBookingData(bookingList, roomList, priceList);
 
+    bookingList.inorder();
     //Setting up the start date of the application
     tm todayDate = toDateTime("01/04/2021");
 
@@ -51,22 +52,29 @@ int main()
 
         else if (choice == "1")
         {
-            //string checkIn;
-            //tm dateInput;
-            ////Check in a guest using the booking information
-            //cout << "\n===================== Check In =====================\n";
-            //cout << "Today's Date: " << fromDateTime(todayDate) << endl;
-            //cout << "Please Enter Check In Date (dd/mm/yyyy): ";
-            //cin >> checkIn;
-            //dateInput = toDateTime(checkIn);
-            //// Guest are not allowed to check in, in the future.
-            //// Catches if user enter a date in the future
-            //if (difftime(mktime(&todayDate), mktime(&dateInput)) < 0) {
-            //    cout << "No check ins for future dates!" << endl;
-            //}
-            //else {
-            //    //Search for checkin date
-            //}
+            //Not done
+            string checkIn;
+            tm dateInput;
+            //Check in a guest using the booking information
+            cout << "\n===================== Check In =====================\n";
+            cout << "Today's Date: " << fromDateTime(todayDate) << endl;
+            cout << "Please Enter Check In Date (dd/mm/yyyy): ";
+            cin >> checkIn;
+            dateInput = toDateTime(checkIn);
+            // Guest are not allowed to check in, in the future.
+            // Catches if user enter a date in the future
+            if (difftime(mktime(&todayDate), mktime(&dateInput)) < 0) {
+                cout << "No check ins for future dates!" << endl;
+            }
+            else {
+                tm checkout = dateInput;
+                checkout.tm_mday++;
+                //Search for checkin date
+                BST_Booking occupiedBookings;
+                // Search all bookings that occupies a room within given date range
+                bookingList.overlapSearch(dateInput, checkout,occupiedBookings);
+                occupiedBookings.inorder();
+            }
         }
 
         else if (choice == "2")
@@ -104,7 +112,7 @@ int main()
 
             // Check availability of room based on room type, check in date and check out date.
             int totalNumOfRoom = priceList.get(roomType).count;
-            bookingList.overlapSearch(targetBooking, occupiedBookings, "roomType");
+            bookingList.overlapSearch(targetBooking, occupiedBookings);
             // All rooms of selected type are occupied or booked during this date range
             if (occupiedBookings.countNodes() >= totalNumOfRoom)
             {
@@ -148,7 +156,25 @@ int main()
 
         else if (choice == "3")
         {
-            // TO DO
+        //Finished
+            string checkIn;
+            tm dateInput;
+            // TO DO : Display guests staying in a particular date
+
+            //Check in a guest using the booking information
+            cout << "\n===================== Display =====================\n";
+            cout << "Today's Date: " << fromDateTime(todayDate) << endl;
+            cout << "Please Enter Check In Date (dd/mm/yyyy): ";
+            cin >> checkIn;
+            dateInput = toDateTime(checkIn);
+            tm checkout = dateInput;
+            checkout.tm_mday++;
+            //Search for checkin date
+            BST_Booking bookings;
+            // Search all bookings that occupies a room within given date range
+            bookingList.overlapSearch(dateInput, checkout, bookings);
+            bookings.inorder();
+
         }
 
         else if (choice == "4")
@@ -169,26 +195,25 @@ int main()
             tm start = toDateTime(startStr);
             tm end = toDateTime(endStr);
 
-            Booking targetBooking = Booking(); // This booking will only be used to check for availability
-            targetBooking.setCheckIn(start); // Set range start
-            targetBooking.setCheckOut(end); // Set range end
+            //Booking targetBooking = Booking(); // This booking will only be used to check for availability
+            //targetBooking.setCheckIn(start); // Set range start
+            //targetBooking.setCheckOut(end); // Set range end
             BST_Booking occupiedBookings;
             // Search all bookings that occupies a room within given date range
-            bookingList.overlapSearch(targetBooking, occupiedBookings, "haveRoom");
+            bookingList.overlapSearch(start,end, occupiedBookings);
 
             occupiedBookings.inorder();
         }
-        else if (choice == "5") {
+        else if (choice == "7") {
             // This code is used to change the date of today
             string dateEntered;
             cout << "\n===================== Change Today's Date =====================\n";
             cout << "Today's Date: " << fromDateTime(todayDate) << endl;
-            cout << endl;
             cout << "Which date do you want to change to: ";
             cin >> dateEntered;
             cout << endl;
             todayDate = toDateTime(dateEntered);
-            cout << "Date successfully changed!";
+            cout << "Date successfully changed!\n";
         }
         else
         {
@@ -387,7 +412,7 @@ void displayMainMenu(tm todayDate) {
     cout << "[2] Add Booking\n";
     cout << "[3] Display Staying Guest by Date\n";
     cout << "[4] Display Occupied Rooms by Month\n";
-    cout << "[5] Change Today's Date\n";
+    cout << "[7] Change Today's Date\n";
     cout << "[0] Exit\n\n";
     cout << "Your Choice: ";
 }
