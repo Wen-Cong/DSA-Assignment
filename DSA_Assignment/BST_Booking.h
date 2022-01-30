@@ -29,12 +29,16 @@ public:
 	BinaryNode* search(BinaryNode* root, ItemType target);
 
 	// search for range of items in the binary search tree and return count
-	int searchRange(tm checkin, tm checkout, string roomType);
-	int searchRange(BinaryNode* root, tm checkin, tm checkout, string roomType);
+	//int searchRange(tm checkin, tm checkout, string roomType);
+	//int searchRange(BinaryNode* root, tm checkin, tm checkout, string roomType);
 
 	// Search for overlapping check in and check out dates for bookings
-	void overlapSearch(Booking b, BST_Booking& bookingList, string query);
-	void overlapSearch(BinaryNode* root, Booking b, BST_Booking& bookingList, string query);
+	void overlapSearch(Booking b, BST_Booking& bookingList);
+	void overlapSearch(BinaryNode* root, Booking b, BST_Booking& bookingList);
+
+	//overlapping search with dates
+	void overlapSearch(tm checkIn, tm checkOut, BST_Booking& bookingList);
+	void overlapSearch(BinaryNode* root, tm checkIn, tm checkOut, BST_Booking& bookingList);
 
 	// insert an item to the binary search tree
 	void insert(ItemType item);
@@ -70,5 +74,7 @@ public:
 	// check if the binary search tree is balanced
 	bool isBalanced();
 	bool isBalanced(BinaryNode* t);
+
+	string fromDateTime(tm date);
 };
 

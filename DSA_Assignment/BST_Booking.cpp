@@ -52,59 +52,59 @@ BinaryNode* BST_Booking::search(BinaryNode* t, ItemType target)
 }
 
 // search for range of items in the binary search tree and return count
-int BST_Booking::searchRange(tm checkin, tm checkout, string roomType)
-{
-	return searchRange(root, checkin, checkout, roomType);
-}
-
-int BST_Booking::searchRange(BinaryNode* root, tm checkin, tm checkout, string roomType)
-{
-	if (root == NULL)
-	{
-		//base case: the tree is empty, we can return 0
-		return 0;
-	}
-	else
-	{
-		// our tree is not empty.
-		int countLeftOccupiedRooms = searchRange(root->left, checkin, checkout, roomType);
-		int countRightOccupiedRooms = searchRange(root->right, checkin, checkout, roomType);
-
-		// Get and format all time data for comparison
-		tm bookingCheckIn = root->item.getCheckIn();
-		tm bookingCheckOut = root->item.getCheckOut();
-		tm tempCheckIn = checkin;
-		tm tempCheckOut = checkout;
-
-		// Set condition to determine if room is occupied or booked
-		/*Checkout date for bookings that are currently in checked in status
-		  is more than check in date entered by customer. Hence, room is unavailable*/
-		bool isRoomOccupied = root->item.getStatus() == "Checked In" 
-						   && root->item.getRoom().getType() == roomType
-						   && difftime(mktime(&bookingCheckOut), mktime(&tempCheckIn)) > 0; // booking check out date is more than check in date entered by customer
-		
-
-		/*If booking check-in date or booking check-out date is within date range input by user
-		and status is booked, then room is unavailable.*/
-		bool isRoomBooked = root->item.getStatus() == "Booked"
-			&& root->item.getRoom().getType() == roomType
-			&& (
-				(difftime(mktime(&bookingCheckIn), mktime(&tempCheckIn)) >= 0 // booking check in date is more than check in date entered by customer
-					&& difftime(mktime(&bookingCheckIn), mktime(&tempCheckOut)) < 0) // booking check in date is less than check out date entered by customer
-				|| (difftime(mktime(&bookingCheckOut), mktime(&tempCheckIn)) > 0 // booking check out date is more than check in date entered by customer
-					&& difftime(mktime(&bookingCheckOut), mktime(&tempCheckOut)) <= 0)); // booking check out date is less than check out date entered by customer
-
-		if (isRoomOccupied || isRoomBooked)
-		{
-			/* 1 more room of this room type is unavailable based on the date range given: we will count it */
-			return 1 + countLeftOccupiedRooms + countRightOccupiedRooms;
-		}
-		else
-		{
-			return countLeftOccupiedRooms + countRightOccupiedRooms;
-		}
-	}
-}
+//int BST_Booking::searchRange(tm checkin, tm checkout, string roomType)
+//{
+//	return searchRange(root, checkin, checkout, roomType);
+//}
+//
+//int BST_Booking::searchRange(BinaryNode* root, tm checkin, tm checkout, string roomType)
+//{
+//	if (root == NULL)
+//	{
+//		//base case: the tree is empty, we can return 0
+//		return 0;
+//	}
+//	else
+//	{
+//		// our tree is not empty.
+//		int countLeftOccupiedRooms = searchRange(root->left, checkin, checkout, roomType);
+//		int countRightOccupiedRooms = searchRange(root->right, checkin, checkout, roomType);
+//
+//		// Get and format all time data for comparison
+//		tm bookingCheckIn = root->item.getCheckIn();
+//		tm bookingCheckOut = root->item.getCheckOut();
+//		tm tempCheckIn = checkin;
+//		tm tempCheckOut = checkout;
+//
+//		// Set condition to determine if room is occupied or booked
+//		/*Checkout date for bookings that are currently in checked in status
+//		  is more than check in date entered by customer. Hence, room is unavailable*/
+//		bool isRoomOccupied = root->item.getStatus() == "Checked In" 
+//						   && root->item.getRoom().getType() == roomType
+//						   && difftime(mktime(&bookingCheckOut), mktime(&tempCheckIn)) > 0; // booking check out date is more than check in date entered by customer
+//		
+//
+//		/*If booking check-in date or booking check-out date is within date range input by user
+//		and status is booked, then room is unavailable.*/
+//		bool isRoomBooked = root->item.getStatus() == "Booked"
+//			&& root->item.getRoom().getType() == roomType
+//			&& (
+//				(difftime(mktime(&bookingCheckIn), mktime(&tempCheckIn)) >= 0 // booking check in date is more than check in date entered by customer
+//					&& difftime(mktime(&bookingCheckIn), mktime(&tempCheckOut)) < 0) // booking check in date is less than check out date entered by customer
+//				|| (difftime(mktime(&bookingCheckOut), mktime(&tempCheckIn)) > 0 // booking check out date is more than check in date entered by customer
+//					&& difftime(mktime(&bookingCheckOut), mktime(&tempCheckOut)) <= 0)); // booking check out date is less than check out date entered by customer
+//
+//		if (isRoomOccupied || isRoomBooked)
+//		{
+//			/* 1 more room of this room type is unavailable based on the date range given: we will count it */
+//			return 1 + countLeftOccupiedRooms + countRightOccupiedRooms;
+//		}
+//		else
+//		{
+//			return countLeftOccupiedRooms + countRightOccupiedRooms;
+//		}
+//	}
+//}
 
 // Check if given two booking have overlapping check-in and check-out date range
 bool isOverlapped(ItemType b1, ItemType b2)
@@ -120,29 +120,21 @@ bool isOverlapped(ItemType b1, ItemType b2)
 	return false;
 }
 
-void BST_Booking::overlapSearch(Booking b, BST_Booking& bookingList, string query)
+void BST_Booking::overlapSearch(Booking b, BST_Booking& bookingList)
 {
-	return overlapSearch(root, b, bookingList, query);
+	return overlapSearch(root, b, bookingList);
 }
 
-void BST_Booking::overlapSearch(BinaryNode* root, Booking b, BST_Booking& bookingList, string query)
+void BST_Booking::overlapSearch(BinaryNode* root, Booking b, BST_Booking& bookingList)
 {
 	// Base Case
-	if (root == NULL) 
+	if (root == NULL)
 		return;
-
-	// Enable dynamic conditions in run time based on query type passed in so that it can be used in multiple situation
 	bool matchedQuery = false;
 	// If given booking check in and check out date overlaps with root check in and check out date for the room type
-	if (query == "roomType") {
-		matchedQuery = isOverlapped(root->item, b) &&
-			b.getRoom().getType() == root->item.getRoom().getType() &&
-			root->item.getStatus() != "Checked Out";
-	}
-	// If given date range overlaps with check in and check out date of booking
-	else if (query == "haveRoom") {
-		matchedQuery = isOverlapped(root->item, b) && root->item.getRoom().getRoomNum() > 0;
-	}
+	matchedQuery = isOverlapped(root->item, b) &&
+	b.getRoom().getType() == root->item.getRoom().getType() &&
+	root->item.getStatus() != "Checked Out";
 
 	if (matchedQuery) {
 		bookingList.insert(root->item);
@@ -155,13 +147,55 @@ void BST_Booking::overlapSearch(BinaryNode* root, Booking b, BST_Booking& bookin
 	// greater than check in time of given booking, 
 	// then there are some rooms occupied during the given check in and check out time
 	if (root->left != NULL && difftime(mktime(&root->left->max), mktime(&bookingCheckIn)) > 0)
-		overlapSearch(root->left, b, bookingList, query);
+		overlapSearch(root->left, b, bookingList);
 
 	// If right child of root is present and min of right child is
 	// lesser than check out time of given booking, 
 	// then there are some rooms occupied during the given check in and check out time
 	if (root->right != NULL && difftime(mktime(&root->right->min), mktime(&bookingCheckOut)) < 0)
-		overlapSearch(root->right, b, bookingList, query);
+		overlapSearch(root->right, b, bookingList);
+	return;
+}
+// Check if given two booking have overlapping check-in and check-out date range
+bool isOverlapped(ItemType b1, tm b2In, tm b2Out)
+{
+	tm b1In = b1.getCheckIn();
+	tm b1Out = b1.getCheckOut();
+
+	if ((difftime(mktime(&b1In), mktime(&b2Out)) < 0) &&
+		(difftime(mktime(&b2In), mktime(&b1Out)) < 0))
+		return true;
+	return false;
+}
+
+void BST_Booking::overlapSearch(tm checkIn,tm checkOut, BST_Booking& bookingList)
+{
+	return overlapSearch( root, checkIn,  checkOut, bookingList);
+}
+
+void BST_Booking::overlapSearch(BinaryNode* root, tm checkIn, tm checkOut, BST_Booking& bookingList)
+{
+	// Base Case
+	if (root == NULL)
+		return;
+
+	bool matchedQuery = isOverlapped(root->item, checkIn,checkOut) && root->item.getRoom().getRoomNum() > 0;
+
+	if (matchedQuery) {
+		bookingList.insert(root->item);
+	}
+
+	// If left child of root is present and max of left child is
+	// greater than check in time of check in, 
+	// then there are some rooms occupied during the given check in and check out time
+	if (root->left != NULL && difftime(mktime(&root->left->max), mktime(&checkIn)) > 0)
+		overlapSearch(root->left, checkIn, checkOut, bookingList);
+
+	// If right child of root is present and min of right child is
+	// lesser than check out time of check out, 
+	// then there are some rooms occupied during the given check in and check out time
+	if (root->right != NULL && difftime(mktime(&root->right->min), mktime(&checkOut)) < 0)
+		overlapSearch(root->right, checkIn, checkOut, bookingList);
 
 	return;
 }
@@ -220,16 +254,32 @@ void BST_Booking::inorder()
 	else
 		inorder(root);
 }
+string BST_Booking::fromDateTime(tm date) {
+	// Convert tm type to string in (dd/mm/yyyy) format
+	string dateStr = "";
+	// Append year, month and day in human readable format
+	dateStr = to_string(date.tm_mday) + "/" + to_string(date.tm_mon + 1) + "/" + to_string(date.tm_year + 1900);
+	// If hour and minute is found, append hour and minute
+	if (date.tm_hour != NULL && date.tm_min != NULL) {
+		dateStr += " " + to_string(date.tm_hour) + ":" + to_string(date.tm_min);
+	}
 
+	return dateStr;
+}
 void BST_Booking::inorder(BinaryNode* t)
 {
 	if (t != NULL)
 	{
+		cout << "L" << endl;
 		inorder(t->left);
+		cout << "M" << endl;
+		cout << "Min " << fromDateTime(t->min) << " Max" << fromDateTime(t->max) << endl;
 		t->item.print();
+		cout << "R" << endl;
 		inorder(t->right);
 	}
 }
+
 // traverse the binary search tree in preorder
 void BST_Booking::preorder()
 {
