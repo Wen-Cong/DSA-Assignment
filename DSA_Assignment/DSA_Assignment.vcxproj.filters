@@ -42,7 +42,7 @@
     <ClCompile Include="BST_Booking.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BST_Checkin.cpp">
+    <ClCompile Include="Queue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -62,7 +62,7 @@
     <ClInclude Include="BST_Booking.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BST_Checkin.h">
+    <ClInclude Include="Queue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
