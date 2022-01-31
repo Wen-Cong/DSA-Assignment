@@ -13,7 +13,6 @@
 #include "Dictionary_Room.h"
 #include "Dictionary_Price.h"
 #include "Booking.h"
-#include "List.h"
 #include "List_AvailableRooms.h"
 using namespace std;
 
@@ -39,7 +38,7 @@ int main()
     List_AvailableRooms availRoom= List_AvailableRooms();
     initRoomData(roomList, priceList,availRoom);
     initBookingData(bookingList, roomList, priceList);
-
+    cout << "Data Loaded!" << endl;
     bookingList.inorder();
     //Setting up the start date of the application
     tm todayDate = toDateTime("02/04/2021");
@@ -58,9 +57,9 @@ int main()
             //Check in a guest using the booking information
             cout << "\n===================== Check In =====================\n";
             cout << "Today's Date: " << fromDateTime(todayDate) << endl;
-
             tm endDate = todayDate;
             endDate.tm_mday++;
+
             //Search for checkin date that falls on today's date
             BST_Booking booking;
             // Search all bookings that occupies a room within given date range
@@ -69,19 +68,21 @@ int main()
                 cout << "No bookings today!" << endl;
             }
             else {
+                int index = 0;
                 int userInput;
-                List dispList;
-                booking.transferList(dispList);
+                //Let user
                 cout << "\n===================== Select Guest =====================\n";
-                dispList.print();
+                booking.printOption(index);
                 cout << "[0] Cancel" << endl;
                 cout << endl;
                 cout << "Please select user to check in:";
                 cin >> userInput;
-                if (userInput != '0') {
-                    Booking target = dispList.get(userInput);
+                if (userInput != 0|| (userInput >0 && userInput<=index)) {
+                    Booking target;
+                    booking.getBooking(target, userInput);
                     BST_Booking occupiedRoom;
                     List_AvailableRooms availRoomList;
+                    cout << fromDateTime(target.getCheckOut()) << endl;
                     bookingList.overlapSearch(target.getCheckIn(),target.getCheckOut(), occupiedRoom,false);
                     for (int i = 0; i < availRoom.getLength(); i++) {
                         if (roomList.get(availRoom.get(i)).getType() == target.getRoom().getType()) {
@@ -95,12 +96,13 @@ int main()
                         Room r = target.getRoom();
                         r.setRoomNum(roomNum);
                         target.setRoom(r);
-                        bookingList.insert(target);
                         target.print();
+                        bookingList.updateBooking(target);
                     }
                     if (target.getStatus() != "Checked In") {
                         cout << "No available rooms to check in!" << endl;
                     }
+
                 }
             }            
         }
@@ -489,7 +491,7 @@ string convertOptionToRoomTypeName(string opt) {
 
 bool addNewBooking(BST_Booking& bookingList, Booking b) {
     // Insert data into booking list
-    bookingList.insert(b);
+    bookingList.insert(*&b);
     // Insert data into Excel file
     ofstream csvFile;
     // Open Bookings csv File in append mode

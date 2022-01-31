@@ -22,13 +22,13 @@ public:
 	// pre : size < MAX_SIZE
 	// post: item is added to the back of the list
 	//       size of list is increased by 1
-	bool add(ItemType item);
+	bool add(ItemType &item);
 
 	// add an item at a specified position in the list (insert)
 	// pre : 0 <= index < size && size < MAX_SIZE
 	// post: item is added to the specified position in the list
 	//       size of list is increased by 1
-	bool add(int index, ItemType item);
+	bool add(int index, ItemType& item);
 
 	// remove an item at a specified position in the list
 	// pre : 0 <= index < size
@@ -39,7 +39,7 @@ public:
 	// get an item at a specified position of the list (retrieve)
 	// pre : 0 <= index < size
 	// post: none
-	ItemType get(int index);
+	ItemType& get(int index);
 
 	// check if the list is empty
 	// pre : none

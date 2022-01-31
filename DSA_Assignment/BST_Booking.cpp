@@ -288,19 +288,111 @@ void BST_Booking::inorder(BinaryNode* t)
 		inorder(t->right);
 	}
 }
-
-//Transfer to list for display
-void BST_Booking::transferList(List& displayList) {
-	return transferList( root, displayList);
+// traverse the binary search tree in inorder
+void BST_Booking::printOption(int& index)
+{
+	if (isEmpty())
+		cout << "No item found" << endl;
+	else
+		return printOption(root,index);
 }
-void BST_Booking::transferList(BinaryNode* t,List& displayList) {
+// print option
+void BST_Booking::printOption(BinaryNode* t, int& index) {
 	if (t != NULL) {
-		transferList(t->left, displayList);
-		displayList.add(t->item);
-		transferList(t->right,displayList);
+		printOption(t->left, index);
+		index++;
+		tm date = t->item.getCheckOut();
+		// Convert tm type to string in (dd/mm/yyyy) format
+		string dateStr = "";
+		// Append year, month and day in human readable format
+		dateStr = to_string(date.tm_mday) + "/" + to_string(date.tm_mon + 1) + "/" + to_string(date.tm_year + 1900);
+		// If hour and minute is found, append hour and minute
+		if (date.tm_hour != NULL && date.tm_min != NULL) {
+			dateStr += " " + to_string(date.tm_hour) + ":" + to_string(date.tm_min);
+		}
+		cout << "[" << index << "] "
+			<< "Name: " << t->item.getGuestName()
+			<< "  Room Type: " << t->item.getRoom().getType()
+			<< "  Check Out Date: " << dateStr << endl;
+		printOption(t->right, index);
+		return;
 	}
+}
+//get booking
+void BST_Booking::getBooking(Booking& b ,int index) {
+	if (isEmpty()) {
+		cout << "No items found" << endl;
+	}
+	else
+	{
+		int count = 0;
+		return getBooking(root, b, index , count);}
+}
+void BST_Booking::getBooking(BinaryNode* t, Booking& b, int index, int& count) {
+	if (t != NULL) {
+		getBooking(t->left, b, index, count);
+		count++;
+		if (count == index) {
+			b = t->item;
+		}
+		getBooking(t->right, b, index, count);
+		return;
+	}
+}
+//get booking
+void BST_Booking::updateBooking(Booking b) {
+	if (isEmpty()) {
+		cout << "No items found" << endl;
+	}
+	else
+	{
+		tm checkin = b.getCheckIn();
+		tm checkout = checkin;
+		checkout.tm_mday++;
+		int count = 0;
+		return updateBooking(root, checkin, checkout, b);
+	}
+}
+void BST_Booking::updateBooking(BinaryNode* t, tm checkIn, tm checkOut, Booking b) {
+	// Base Case
+	if (t == NULL)
+		return;
+
+	bool matchedQuery = isOverlapped(t->item, checkIn, checkOut);
+
+	if (matchedQuery) {
+		//if booked == true search for only status that are booked
+		if (t->item.getId() == b.getId()) {
+			t->item = b;
+		}
+	}
+
+	// If left child of root is present and max of left child is
+	// greater than check in time of check in, 
+	// then there are some rooms occupied during the given check in and check out time
+	if (t->left != NULL && difftime(mktime(&t->left->max), mktime(&checkIn)) > 0)
+		updateBooking(t->left, checkIn, checkOut,b);
+
+	// If right child of root is present and min of right child is
+	// lesser than check out time of check out, 
+	// then there are some rooms occupied during the given check in and check out time
+	if (t->right != NULL && difftime(mktime(&t->right->min), mktime(&checkOut)) < 0)
+		updateBooking(t->right, checkIn, checkOut, b);
 	return;
 }
+
+////Transfer to list for display
+//void BST_Booking::transferList(List& displayList) {
+//	return transferList( root, displayList);
+//}
+//void BST_Booking::transferList(BinaryNode* t,List& displayList) {
+//	if (t != NULL) {
+//		transferList(t->left, displayList);
+//		displayList.add(t->item);
+//		transferList(t->right,displayList);
+//	}
+//	return;
+//}
 
 //Transfer to list for display
 int BST_Booking::availRoomList(List_AvailableRooms& aRoomList, string type) {
@@ -432,6 +524,7 @@ void BST_Booking::remove(ItemType target)
 	remove(root, target);
 	balanceTree(root);			// AVL Tree function
 }
+
 
 
 void BST_Booking::remove(BinaryNode*& t, ItemType item)

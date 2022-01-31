@@ -42,9 +42,6 @@
     <ClCompile Include="BST_Booking.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="List.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="List_AvailableRooms.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -63,9 +60,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BST_Booking.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="List.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="List_AvailableRooms.h">
