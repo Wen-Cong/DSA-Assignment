@@ -123,7 +123,7 @@ void Booking::print()
 	cout << "Room Number: " << room.getRoomNum() << endl;
 	cout << "Room Type: " << room.getType() << endl;
 	cout << "Status: " << status << endl;
-	cout << "Date :" << date.tm_mday << "/" << date.tm_mon + 1 << "/" << date.tm_year + 1900 << " " << date.tm_hour << ":" << date.tm_min << endl;
+	cout << "Booking Date :" << date.tm_mday << "/" << date.tm_mon + 1 << "/" << date.tm_year + 1900 << " " << date.tm_hour << ":" << date.tm_min << endl;
 	cout << "Check In :" << checkIn.tm_mday << "/" << checkIn.tm_mon + 1 << "/" << checkIn.tm_year + 1900 << endl;
 	cout << "Check Out :" << checkOut.tm_mday << "/" << checkOut.tm_mon + 1 << "/" << checkOut.tm_year + 1900 << endl;
 	cout << endl;
