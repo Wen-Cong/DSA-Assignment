@@ -12,7 +12,9 @@
 #include<iostream>
 using namespace std;
 #include "BinaryNode.h"
-#include "AVL_Tree.h"		// AVL Tree functions
+#include "AVL_Tree.h" // AVL Tree functions
+#include "List.h"
+#include "List_AvailableRooms.h"
 
 class BST_Booking
 {
@@ -28,7 +30,7 @@ public:
 	BinaryNode* search(ItemType target);
 	BinaryNode* search(BinaryNode* root, ItemType target);
 
-	// search for range of items in the binary search tree and return count
+	//// search for range of items in the binary search tree and return count
 	//int searchRange(tm checkin, tm checkout, string roomType);
 	//int searchRange(BinaryNode* root, tm checkin, tm checkout, string roomType);
 
@@ -37,8 +39,8 @@ public:
 	void overlapSearch(BinaryNode* root, Booking b, BST_Booking& bookingList);
 
 	//overlapping search with dates
-	void overlapSearch(tm checkIn, tm checkOut, BST_Booking& bookingList);
-	void overlapSearch(BinaryNode* root, tm checkIn, tm checkOut, BST_Booking& bookingList);
+	void overlapSearch(tm checkIn, tm checkOut, BST_Booking& bookingList,bool isBooked);
+	void overlapSearch(BinaryNode* root, tm checkIn, tm checkOut, BST_Booking& bookingList, bool isBooked);
 
 	// insert an item to the binary search tree
 	void insert(ItemType item);
@@ -76,5 +78,11 @@ public:
 	bool isBalanced(BinaryNode* t);
 
 	string fromDateTime(tm date);
+	// to transfer to List for display
+	void transferList(List& displayList);
+	void transferList(BinaryNode* t,List& displayList);
+
+	int availRoomList(List_AvailableRooms& aRoomList, string type);
+	void availRoomList(BinaryNode* t, List_AvailableRooms& aRoomList, string type);
 };
 

@@ -13,6 +13,8 @@
 #include "Dictionary_Room.h"
 #include "Dictionary_Price.h"
 #include "Booking.h"
+#include "List.h"
+#include "List_AvailableRooms.h"
 using namespace std;
 
 
@@ -20,7 +22,7 @@ int toInt(string text);
 tm toDateTime(string dateString);
 string fromDateTime(tm date);
 int getMaxDay(int month, int year);
-void initRoomData(Dictionary_Room& roomList, Dictionary_Price& priceList);
+void initRoomData(Dictionary_Room& roomList, Dictionary_Price& priceList, List_AvailableRooms& availRoom);
 void initBookingData(BST_Booking& bookingList, Dictionary_Room roomList, Dictionary_Price priceList);
 void displayMainMenu(tm todayDate);
 void displayAllMonths();
@@ -34,12 +36,13 @@ int main()
     BST_Booking bookingList = BST_Booking();
     Dictionary_Room roomList = Dictionary_Room();
     Dictionary_Price priceList = Dictionary_Price();
-    initRoomData(roomList, priceList);
+    List_AvailableRooms availRoom= List_AvailableRooms();
+    initRoomData(roomList, priceList,availRoom);
     initBookingData(bookingList, roomList, priceList);
 
     bookingList.inorder();
     //Setting up the start date of the application
-    tm todayDate = toDateTime("01/04/2021");
+    tm todayDate = toDateTime("02/04/2021");
 
     string choice;
     while (choice != "0")
@@ -52,29 +55,54 @@ int main()
 
         else if (choice == "1")
         {
-            //Not done
-            string checkIn;
-            tm dateInput;
             //Check in a guest using the booking information
             cout << "\n===================== Check In =====================\n";
             cout << "Today's Date: " << fromDateTime(todayDate) << endl;
-            cout << "Please Enter Check In Date (dd/mm/yyyy): ";
-            cin >> checkIn;
-            dateInput = toDateTime(checkIn);
-            // Guest are not allowed to check in, in the future.
-            // Catches if user enter a date in the future
-            if (difftime(mktime(&todayDate), mktime(&dateInput)) < 0) {
-                cout << "No check ins for future dates!" << endl;
+
+            tm endDate = todayDate;
+            endDate.tm_mday++;
+            //Search for checkin date that falls on today's date
+            BST_Booking booking;
+            // Search all bookings that occupies a room within given date range
+            bookingList.overlapSearch(todayDate, endDate, booking, true);
+            if (booking.isEmpty()) {
+                cout << "No bookings today!" << endl;
             }
             else {
-                tm checkout = dateInput;
-                checkout.tm_mday++;
-                //Search for checkin date
-                BST_Booking occupiedBookings;
-                // Search all bookings that occupies a room within given date range
-                bookingList.overlapSearch(dateInput, checkout,occupiedBookings);
-                occupiedBookings.inorder();
-            }
+                int userInput;
+                List dispList;
+                booking.transferList(dispList);
+                cout << "\n===================== Select Guest =====================\n";
+                dispList.print();
+                cout << "[0] Cancel" << endl;
+                cout << endl;
+                cout << "Please select user to check in:";
+                cin >> userInput;
+                if (userInput != '0') {
+                    Booking target = dispList.get(userInput);
+                    BST_Booking occupiedRoom;
+                    List_AvailableRooms availRoomList;
+                    bookingList.overlapSearch(target.getCheckIn(),target.getCheckOut(), occupiedRoom,false);
+                    for (int i = 0; i < availRoom.getLength(); i++) {
+                        if (roomList.get(availRoom.get(i)).getType() == target.getRoom().getType()) {
+                            availRoomList.add(availRoom.get(i));
+                        }
+                    }
+                    //Get not occupied rooms of the same type
+                    int roomNum = occupiedRoom.availRoomList(availRoomList, target.getRoom().getType());
+                    if (roomNum != -1) {
+                        target.setStatus("Checked In");
+                        Room r = target.getRoom();
+                        r.setRoomNum(roomNum);
+                        target.setRoom(r);
+                        bookingList.insert(target);
+                        target.print();
+                    }
+                    if (target.getStatus() != "Checked In") {
+                        cout << "No available rooms to check in!" << endl;
+                    }
+                }
+            }            
         }
 
         else if (choice == "2")
@@ -157,22 +185,23 @@ int main()
         else if (choice == "3")
         {
         //Finished
-            string checkIn;
+            string selectedDate;
             tm dateInput;
             // TO DO : Display guests staying in a particular date
 
             //Check in a guest using the booking information
-            cout << "\n===================== Display =====================\n";
+            cout << "\n===================== Display Guest Staying On A Particular Date =====================\n";
             cout << "Today's Date: " << fromDateTime(todayDate) << endl;
             cout << "Please Enter Check In Date (dd/mm/yyyy): ";
-            cin >> checkIn;
-            dateInput = toDateTime(checkIn);
+            cin >> selectedDate;
+            dateInput = toDateTime(selectedDate);
+            //setting the end date (Note: Not inclusive)
             tm checkout = dateInput;
             checkout.tm_mday++;
             //Search for checkin date
             BST_Booking bookings;
             // Search all bookings that occupies a room within given date range
-            bookingList.overlapSearch(dateInput, checkout, bookings);
+            bookingList.overlapSearch(dateInput, checkout, bookings, false);
             bookings.inorder();
 
         }
@@ -200,7 +229,7 @@ int main()
             //targetBooking.setCheckOut(end); // Set range end
             BST_Booking occupiedBookings;
             // Search all bookings that occupies a room within given date range
-            bookingList.overlapSearch(start,end, occupiedBookings);
+            bookingList.overlapSearch(start,end, occupiedBookings, false);
 
             occupiedBookings.inorder();
         }
@@ -278,7 +307,7 @@ int getMaxDay(int month, int year) {
     }
 }
 
-void initRoomData(Dictionary_Room& roomList, Dictionary_Price& priceList) {
+void initRoomData(Dictionary_Room& roomList, Dictionary_Price& priceList, List_AvailableRooms& availRoom) {
     // Open room csv file and import room data
     ifstream inputFile;
     inputFile.open("Rooms.csv");
@@ -314,7 +343,7 @@ void initRoomData(Dictionary_Room& roomList, Dictionary_Price& priceList) {
             // Append to room list
             Room r = Room(roomNum, roomType, price);
             roomList.add(roomNum, r);
-
+            availRoom.add(roomNum);
             // Append to price list
             PriceRoomType rt = PriceRoomType();
             rt.price = price;

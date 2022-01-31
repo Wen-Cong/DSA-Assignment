@@ -35,28 +35,23 @@ BinaryNode* BST_Booking::search(BinaryNode* t, ItemType target)
 			&& (t->item.getCheckIn().tm_mday == target.getCheckIn().tm_mday))		// item found
 			return t;
 		else
-			if (//Check if target year is smaller than root's target year
-				(t->item.getCheckIn().tm_year > target.getCheckIn().tm_year) ||
-				//In case both are in the same year, check month
-				((t->item.getCheckIn().tm_year == target.getCheckIn().tm_year)
-					&& (t->item.getCheckIn().tm_mon > target.getCheckIn().tm_mon)) ||
-				//In case both are in the same year and month, check day
-				((t->item.getCheckIn().tm_year == target.getCheckIn().tm_year)
-					&& (t->item.getCheckIn().tm_mon == target.getCheckIn().tm_mon)
-					&& (t->item.getCheckIn().tm_mday > target.getCheckIn().tm_mday))
-				)	// search in left subtree
+			//Comparing time the year have to be the no. of years different from 1900
+			tm compare = t->item.getCheckIn();
+			tm temp = target.getCheckIn();
+		//if difftime > 1 temp is earlier
+			if (difftime(mktime(&compare), mktime(&temp)) > 0)
 				return search(t->left, target);
-			else					// search in right subtree
-				return search(t->right, target);
+		else					// search in right subtree
+			return search(t->right, target);
 	}
 }
 
-// search for range of items in the binary search tree and return count
+// //search for range of items in the binary search tree and return count
 //int BST_Booking::searchRange(tm checkin, tm checkout, string roomType)
 //{
 //	return searchRange(root, checkin, checkout, roomType);
 //}
-//
+
 //int BST_Booking::searchRange(BinaryNode* root, tm checkin, tm checkout, string roomType)
 //{
 //	if (root == NULL)
@@ -168,34 +163,46 @@ bool isOverlapped(ItemType b1, tm b2In, tm b2Out)
 	return false;
 }
 
-void BST_Booking::overlapSearch(tm checkIn,tm checkOut, BST_Booking& bookingList)
+void BST_Booking::overlapSearch(tm checkIn,tm checkOut, BST_Booking& bookingList, bool isBooked)
 {
-	return overlapSearch( root, checkIn,  checkOut, bookingList);
+	return overlapSearch( root, checkIn,  checkOut, bookingList, isBooked);
 }
 
-void BST_Booking::overlapSearch(BinaryNode* root, tm checkIn, tm checkOut, BST_Booking& bookingList)
+void BST_Booking::overlapSearch(BinaryNode* root, tm checkIn, tm checkOut, BST_Booking& bookingList,bool isBooked)
 {
 	// Base Case
 	if (root == NULL)
 		return;
 
-	bool matchedQuery = isOverlapped(root->item, checkIn,checkOut) && root->item.getRoom().getRoomNum() > 0;
+	bool matchedQuery = isOverlapped(root->item, checkIn,checkOut);
 
 	if (matchedQuery) {
-		bookingList.insert(root->item);
+		//if booked == true search for only status that are booked
+		if (isBooked) {
+			if (root->item.getStatus() == "Booked") {
+				bookingList.insert(root->item);
+			}
+		}
+		else {
+			//Add to the list those bookings status != "Booked"
+			if (root->item.getStatus() != "Booked") {
+				bookingList.insert(root->item);
+			}
+			
+		}		
 	}
 
 	// If left child of root is present and max of left child is
 	// greater than check in time of check in, 
 	// then there are some rooms occupied during the given check in and check out time
 	if (root->left != NULL && difftime(mktime(&root->left->max), mktime(&checkIn)) > 0)
-		overlapSearch(root->left, checkIn, checkOut, bookingList);
+		overlapSearch(root->left, checkIn, checkOut, bookingList, isBooked);
 
 	// If right child of root is present and min of right child is
 	// lesser than check out time of check out, 
 	// then there are some rooms occupied during the given check in and check out time
 	if (root->right != NULL && difftime(mktime(&root->right->min), mktime(&checkOut)) < 0)
-		overlapSearch(root->right, checkIn, checkOut, bookingList);
+		overlapSearch(root->right, checkIn, checkOut, bookingList, isBooked);
 
 	return;
 }
@@ -278,6 +285,45 @@ void BST_Booking::inorder(BinaryNode* t)
 		cout << "R" << endl;
 		inorder(t->right);
 	}
+}
+
+//Transfer to list for display
+void BST_Booking::transferList(List& displayList) {
+	return transferList( root, displayList);
+}
+void BST_Booking::transferList(BinaryNode* t,List& displayList) {
+	if (t != NULL) {
+		transferList(t->left, displayList);
+		displayList.add(t->item);
+		transferList(t->right,displayList);
+	}
+	return;
+}
+
+//Transfer to list for display
+int BST_Booking::availRoomList(List_AvailableRooms& aRoomList, string type) {
+	List_AvailableRooms temp = List_AvailableRooms();
+	availRoomList(root, temp, type);
+for (int i = 0; i < aRoomList.getLength(); i++) {
+		if (!temp.exists(aRoomList.get(i))) {
+			return aRoomList.get(i);
+		}
+	}
+	
+	return -1;
+}
+void BST_Booking::availRoomList(BinaryNode* t, List_AvailableRooms& aRoomList, string type) {
+	if (t != NULL) {
+		availRoomList(t->left, aRoomList, type);
+		if (t->item.getRoom().getType() == type) {
+			
+			if (!aRoomList.exists(t->item.getRoom().getRoomNum())) {
+				aRoomList.add(t->item.getRoom().getRoomNum());
+			}				
+		}		
+		availRoomList(t->right, aRoomList,type);
+	}
+	return;
 }
 
 // traverse the binary search tree in preorder
@@ -392,9 +438,7 @@ void BST_Booking::remove(BinaryNode*& t, ItemType item)
 	{
 		//Comparing time the year have to be the no. of years different from 1900
 		tm compare = t->item.getCheckIn();
-		compare.tm_year -= 1900;
 		tm temp = item.getCheckIn();
-		temp.tm_year -= 1900;
 		//if difftime > 1 temp is earlier
 		if (difftime(mktime(&compare), mktime(&temp)) > 0)		// search in left subtree
 			remove(t->left, item);
