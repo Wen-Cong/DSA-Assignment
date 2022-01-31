@@ -35,14 +35,16 @@ BinaryNode* BST_Booking::search(BinaryNode* t, ItemType target)
 			&& (t->item.getCheckIn().tm_mday == target.getCheckIn().tm_mday))		// item found
 			return t;
 		else
+		{
 			//Comparing time the year have to be the no. of years different from 1900
 			tm compare = t->item.getCheckIn();
 			tm temp = target.getCheckIn();
-		//if difftime > 1 temp is earlier
+			//if difftime > 1 temp is earlier
 			if (difftime(mktime(&compare), mktime(&temp)) > 0)
 				return search(t->left, target);
-		else					// search in right subtree
-			return search(t->right, target);
+			else					// search in right subtree
+				return search(t->right, target);
+		}
 	}
 }
 

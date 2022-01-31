@@ -146,7 +146,8 @@
     <ClCompile Include="Dictionary_Price.cpp" />
     <ClCompile Include="Dictionary_Room.cpp" />
     <ClCompile Include="DSA_Assignment.cpp" />
-    <ClCompile Include="Queue.cpp" />
+    <ClCompile Include="List.cpp" />
+    <ClCompile Include="List_AvailableRooms.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="Room.h" />
   </ItemGroup>
@@ -156,7 +157,8 @@
     <ClInclude Include="BST_Booking.h" />
     <ClInclude Include="Dictionary_Price.h" />
     <ClInclude Include="Dictionary_Room.h" />
-    <ClInclude Include="Queue.h" />
+    <ClInclude Include="List.h" />
+    <ClInclude Include="List_AvailableRooms.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
