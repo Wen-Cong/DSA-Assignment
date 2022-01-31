@@ -13,7 +13,7 @@
 using namespace std;
 #include "BinaryNode.h"
 #include "AVL_Tree.h" // AVL Tree functions
-#include "List_AvailableRooms.h"
+#include "List.h"
 typedef Booking ItemType;
 class BST_Booking
 {
@@ -81,8 +81,8 @@ public:
 	/*void transferList(List& displayList);
 	void transferList(BinaryNode* t,List& displayList);*/
 
-	int availRoomList(List_AvailableRooms& aRoomList, string type);
-	void availRoomList(BinaryNode* t, List_AvailableRooms& aRoomList, string type);
+	int availRoomList(List& aRoomList, string type);
+	void availRoomList(BinaryNode* t, List& aRoomList, string type);
 
 	void printOption(int& index);
 	void printOption(BinaryNode* t, int& index);

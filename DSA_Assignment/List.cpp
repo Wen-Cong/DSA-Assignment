@@ -1,13 +1,19 @@
-// List.cpp - Implementation of List ADT using Array
-#include "List.h"  // header file
+//============================================================
+// Student Number : S10205010, S10194723
+// Student Name : Lim Xiang, Yeo Wen Cong
+// Team Number : 10
+// Module Group : P02 
+//============================================================
+// List_AvailableRooms.cpp - Implementation of List ADT using Array
+#include "List.h" // header file
 
 // constructor
 List::List() { size = 0; }
 
 // add an item to the back of the list (append)
-bool List::add(ItemType &item)
+bool List::add(AvailRoom item)
 {
-	bool success = size < MAX_SIZE;
+	bool success = size < AR_MAX_SIZE;
 	if (success)
 	{
 		items[size] = item;    // add to the end of the list
@@ -17,9 +23,9 @@ bool List::add(ItemType &item)
 }
 
 // add an item at a specified position in the list (insert)
-bool List::add(int index, ItemType& item)
+bool List::add(int index, AvailRoom item)
 {
-	bool success = (index >= 0) && (index <= size) && (size < MAX_SIZE);
+	bool success = (index >= 0) && (index <= size) && (size < AR_MAX_SIZE);
 	if (success)
 	{  // make room for the item by shifting all items at
 	   // positions >= index toward the end of the
@@ -49,14 +55,13 @@ void List::remove(int index)
 }
 
 // get an item at a specified position of the list (retrieve)
-ItemType& List::get(int index)
+AvailRoom List::get(int index)
 {
-	ItemType p;
 	bool success = (index >= 0) && (index < size);
 	if (success)
 		return items[index];
 	else
-		return p;
+		return -1;
 }
 
 // check if the list is empty
@@ -72,40 +77,27 @@ void List::print()
 {
 
 	for (int pos = 0; pos < size; pos++) {
-		tm date = items[pos].getCheckOut();
-		// Convert tm type to string in (dd/mm/yyyy) format
-		string dateStr = "";
-		// Append year, month and day in human readable format
-		dateStr = to_string(date.tm_mday) + "/" + to_string(date.tm_mon + 1) + "/" + to_string(date.tm_year + 1900);
-		// If hour and minute is found, append hour and minute
-		if (date.tm_hour != NULL && date.tm_min != NULL) {
-			dateStr += " " + to_string(date.tm_hour) + ":" + to_string(date.tm_min);
-		}
-		cout << "[" << pos + 1 << "] " 
-			<< "  Name: " << items[pos].getGuestName() 
-			<< "  Room Type: " << items[pos].getRoom().getType() 
-			<< "  Check Out Date: " << dateStr << endl;
+		cout << "Room Number: "<< items[pos] << endl;
 	}
 }
 
 // replace the  item in the specified index in the list
-void List::replace(int index, ItemType item)
+void List::replace(int index, AvailRoom item)
 {
 	items[index] = item;
 }
-
-// to find specified person's name
-int List::findName(string target) {
-	int p =-1;
-	if (size > 0) {
-		for (int pos = 0; pos < size; pos++) {
-			if (items[pos].getGuestName() == target) {
-				return pos;
-			}
+int List::find(AvailRoom item) {
+	for (int pos = 0; pos < size; pos++) {
+		if (items[pos] == item) {
+			return pos;
 		}
-		return p;
+	}return-1;
+}
+bool List::exists(AvailRoom item) {
+	for (int pos = 0; pos < size; pos++) {
+		if (items[pos] == item) {
+			return true;
+		}
 	}
-	else {
-		return p;
-	}
+	return false;
 }

@@ -395,8 +395,8 @@ void BST_Booking::updateBooking(BinaryNode* t, tm checkIn, tm checkOut, Booking 
 //}
 
 //Transfer to list for display
-int BST_Booking::availRoomList(List_AvailableRooms& aRoomList, string type) {
-	List_AvailableRooms temp = List_AvailableRooms();
+int BST_Booking::availRoomList(List& aRoomList, string type) {
+	List temp = List();
 	availRoomList(root, temp, type);
 for (int i = 0; i < aRoomList.getLength(); i++) {
 		if (!temp.exists(aRoomList.get(i))) {
@@ -406,7 +406,7 @@ for (int i = 0; i < aRoomList.getLength(); i++) {
 	
 	return -1;
 }
-void BST_Booking::availRoomList(BinaryNode* t, List_AvailableRooms& aRoomList, string type) {
+void BST_Booking::availRoomList(BinaryNode* t, List& aRoomList, string type) {
 	if (t != NULL) {
 		availRoomList(t->left, aRoomList, type);
 		if (t->item.getRoom().getType() == type) {

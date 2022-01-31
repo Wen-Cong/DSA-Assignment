@@ -13,7 +13,8 @@
 #include "Dictionary_Room.h"
 #include "Dictionary_Price.h"
 #include "Booking.h"
-#include "List_AvailableRooms.h"
+#include "List.h"
+#include "Queue.h"
 using namespace std;
 
 
@@ -21,12 +22,13 @@ int toInt(string text);
 tm toDateTime(string dateString);
 string fromDateTime(tm date);
 int getMaxDay(int month, int year);
-void initRoomData(Dictionary_Room& roomList, Dictionary_Price& priceList, List_AvailableRooms& availRoom);
+void initRoomData(Dictionary_Room& roomList, Dictionary_Price& priceList, List& availRoom);
 void initBookingData(BST_Booking& bookingList, Dictionary_Room roomList, Dictionary_Price priceList);
 void displayMainMenu(tm todayDate);
 void displayAllMonths();
 string convertOptionToRoomTypeName(string opt);
 bool addNewBooking(BST_Booking& bookingList, Booking b);
+void updateBookingData(Booking b, Dictionary_Room roomList, Dictionary_Price priceList);
 
 int main()
 {
@@ -35,7 +37,7 @@ int main()
     BST_Booking bookingList = BST_Booking();
     Dictionary_Room roomList = Dictionary_Room();
     Dictionary_Price priceList = Dictionary_Price();
-    List_AvailableRooms availRoom= List_AvailableRooms();
+    List availRoom= List();
     initRoomData(roomList, priceList,availRoom);
     initBookingData(bookingList, roomList, priceList);
     cout << "Data Loaded!" << endl;
@@ -81,7 +83,7 @@ int main()
                     Booking target;
                     booking.getBooking(target, userInput);
                     BST_Booking occupiedRoom;
-                    List_AvailableRooms availRoomList;
+                    List availRoomList;
                     cout << fromDateTime(target.getCheckOut()) << endl;
                     bookingList.overlapSearch(target.getCheckIn(),target.getCheckOut(), occupiedRoom,false);
                     for (int i = 0; i < availRoom.getLength(); i++) {
@@ -98,6 +100,7 @@ int main()
                         target.setRoom(r);
                         target.print();
                         bookingList.updateBooking(target);
+                        updateBookingData(target,roomList,priceList);
                     }
                     if (target.getStatus() != "Checked In") {
                         cout << "No available rooms to check in!" << endl;
@@ -309,7 +312,7 @@ int getMaxDay(int month, int year) {
     }
 }
 
-void initRoomData(Dictionary_Room& roomList, Dictionary_Price& priceList, List_AvailableRooms& availRoom) {
+void initRoomData(Dictionary_Room& roomList, Dictionary_Price& priceList, List& availRoom) {
     // Open room csv file and import room data
     ifstream inputFile;
     inputFile.open("Rooms.csv");
@@ -515,4 +518,119 @@ bool addNewBooking(BST_Booking& bookingList, Booking b) {
     csvFile.close();
 
     return true;
+}
+void updateBookingData(Booking b, Dictionary_Room roomList, Dictionary_Price priceList) {
+    // Open booking csv file and import booking data
+    ifstream inputFile;
+    inputFile.open("Bookings.csv");
+    Queue q = Queue();
+    int count = 0;// Initialise variables
+        string bId, header1;
+        string bDate, header2;
+        string bGuestName,header3;
+        string bRoomNumber,header4;
+        string bRoomType,header5;
+        string bStatus,header6;
+        string bIn,header7;
+        string bOut,header8;
+        string bGuestNum,header9;
+        string bReq,header10;
+    // Check if file open successfully
+    if (inputFile.is_open()) {
+        
+        string line;
+        getline(inputFile, header1, ',');
+        getline(inputFile, header2, ',');
+        getline(inputFile, header3, ',');
+        getline(inputFile, header4, ',');
+        getline(inputFile, header5, ',');
+        getline(inputFile, header6, ',');
+        getline(inputFile, header7, ',');
+        getline(inputFile, header8, ',');
+        getline(inputFile, header9, ',');
+        getline(inputFile, header10);
+        bool found = false;
+        // Read room csv data row while it still have rows
+        while (!inputFile.eof()) {
+            getline(inputFile, bId, ',');
+            getline(inputFile, bDate, ',');
+            getline(inputFile, bGuestName, ',');
+            getline(inputFile, bRoomNumber, ',');
+            getline(inputFile, bRoomType, ',');
+            getline(inputFile, bStatus, ',');
+            getline(inputFile, bIn, ',');
+            getline(inputFile, bOut, ',');
+            getline(inputFile, bGuestNum, ',');
+            getline(inputFile, bReq);
+            // Remove the first 4 char "Room" and convert reamining char from string to integer
+            int roomNum = toInt(bRoomNumber.erase(0, 4));
+            // Convert booking ID and Number of Guest to int
+            int id = toInt(bId);
+            int guestNum = toInt(bGuestNum);
+            // Convert booking date, checkin date, checkout date from string to time
+            tm date = toDateTime(bDate);
+            tm in = toDateTime(bIn);
+            tm out = toDateTime(bOut);
+            // Get room item from room list using room number
+            Room bookedRoom = roomList.get(roomNum);
+            // Room number is not assigned to this booking yet, create a room object without room number first
+            if (bookedRoom.getRoomNum() < 0) {
+                // Find price for room type retrieve set room price for bookedRoom
+                double price = priceList.get(bRoomType).price;
+                // Set price and room type into room object
+                bookedRoom.setType(bRoomType);
+                bookedRoom.setPrice(price);
+            }
+            Booking t = Booking(id, date, bGuestName, bookedRoom, bStatus, in, out, guestNum, bReq);
+            q.enqueue(t);
+            if (toInt(bId) == b.getId())
+                found = true;
+            if (!found) {
+                count++;
+            }            
+
+        }
+    }
+    // Close file stream
+    inputFile.close();
+    string inStr = fromDateTime(b.getCheckIn());
+    string outStr = fromDateTime(b.getCheckOut());
+    string bDateStr = fromDateTime(b.getDate());
+    string roomNumStr = "";
+    if (b.getRoom().getRoomNum() >= 0)
+        roomNumStr = "Room " + to_string(b.getRoom().getRoomNum());
+    // Insert data into Excel file
+    ofstream csvFile;
+    // Open Bookings csv File in append mode
+    csvFile.open("Bookings.csv", ios::trunc);
+    // Check if file open successfully
+    if (csvFile.is_open()) {
+        csvFile << header1 << "," << header2 << "," << header3 << "," << header4 << ",";
+        csvFile << header5 << "," << header6 << "," << header7 << "," << header8 << ",";
+        csvFile << header9 << "," << header10 << endl;
+        while (!q.isEmpty()) {
+            count--;
+            if (count == 0) {
+                csvFile << b.getId() << "," << bDateStr << "," << b.getGuestName() << "," << roomNumStr << ",";
+                csvFile << b.getRoom().getType() << "," << b.getStatus() << "," << inStr << "," << outStr << ",";
+                csvFile << b.getNumOfGuest() << "," << b.getRequest() << endl;
+            }
+            else {
+                Booking e;
+                q.dequeue(e);
+                string inStrE = fromDateTime(b.getCheckIn());
+                string outStrE = fromDateTime(b.getCheckOut());
+                string bDateStrE = fromDateTime(b.getDate());
+                string roomNumStrE = "";
+                if (b.getRoom().getRoomNum() >= 0)
+                    roomNumStrE = "Room " + to_string(b.getRoom().getRoomNum());
+                csvFile << e.getId() << "," << bDateStrE << "," << e.getGuestName() << "," << roomNumStrE << ",";
+                csvFile << e.getRoom().getType() << "," << e.getStatus() << "," << inStrE << "," << outStrE << ",";
+                csvFile << e.getNumOfGuest() << "," << e.getRequest() << endl;
+            }           
+
+        }
+    }
+    // Close file
+    csvFile.close();
 }

@@ -23,7 +23,7 @@ private:
 	{
 		RoomKeyType	key;   // search key
 		RoomType item;	// data item
-		Node     *next;	// pointer pointing to next item with same search key
+		Node    *next;	// pointer pointing to next item with same search key
 	};
 
 	Node *items[ROOM_MAX_SIZE];

@@ -1,16 +1,15 @@
-// List.h - - Specification of List ADT
 #pragma once
 #include <iostream>
-#include "Booking.h"
 using namespace std;
 
-const int MAX_SIZE = 100;
-typedef Booking ItemType;
+typedef int AvailRoom;
+// to change accordingly to number of rooms
+const int AR_MAX_SIZE = 20;
 
 class List
 {
-private:
-	ItemType items[MAX_SIZE];
+public:
+	AvailRoom items[AR_MAX_SIZE];
 	int      size;
 
 public:
@@ -22,13 +21,13 @@ public:
 	// pre : size < MAX_SIZE
 	// post: item is added to the back of the list
 	//       size of list is increased by 1
-	bool add(ItemType &item);
+	bool add(AvailRoom item);
 
 	// add an item at a specified position in the list (insert)
 	// pre : 0 <= index < size && size < MAX_SIZE
 	// post: item is added to the specified position in the list
 	//       size of list is increased by 1
-	bool add(int index, ItemType& item);
+	bool add(int index, AvailRoom item);
 
 	// remove an item at a specified position in the list
 	// pre : 0 <= index < size
@@ -39,7 +38,7 @@ public:
 	// get an item at a specified position of the list (retrieve)
 	// pre : 0 <= index < size
 	// post: none
-	ItemType& get(int index);
+	AvailRoom get(int index);
 
 	// check if the list is empty
 	// pre : none
@@ -52,19 +51,19 @@ public:
 	// post: none
 	// return the number of items in the list
 	int getLength();
-	
+
 	// to display all the items in the list
 	// pre: none
 	// post: none <-- no changes made to the list
 	void print();
-	
+
 	// to replace the specified index position with the item
 	// pre: 0 <= index < size
 	// post: item is now in index position
-	void replace(int index, ItemType item);
+	void replace(int index, AvailRoom item);
 
-	// to find specified person's name
-	// pre: none
-	// post: none
-	int findName(string);
+	int find(AvailRoom item);
+
+	bool exists(AvailRoom item);
 };
+
