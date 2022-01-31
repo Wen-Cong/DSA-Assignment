@@ -5,7 +5,7 @@
 #include"Booking.h"
 using namespace std;
 
-typedef Booking QueueType;
+typedef string QueueType;
 
 class Queue
 {

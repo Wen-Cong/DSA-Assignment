@@ -28,7 +28,7 @@ void displayMainMenu(tm todayDate);
 void displayAllMonths();
 string convertOptionToRoomTypeName(string opt);
 bool addNewBooking(BST_Booking& bookingList, Booking b);
-void updateBookingData(Booking b, Dictionary_Room roomList, Dictionary_Price priceList);
+void updateBookingData(Booking b);
 
 int main()
 {
@@ -100,7 +100,7 @@ int main()
                         target.setRoom(r);
                         target.print();
                         bookingList.updateBooking(target);
-                        updateBookingData(target,roomList,priceList);
+                        updateBookingData(target);
                     }
                     if (target.getStatus() != "Checked In") {
                         cout << "No available rooms to check in!" << endl;
@@ -519,7 +519,7 @@ bool addNewBooking(BST_Booking& bookingList, Booking b) {
 
     return true;
 }
-void updateBookingData(Booking b, Dictionary_Room roomList, Dictionary_Price priceList) {
+void updateBookingData(Booking b) {
     // Open booking csv file and import booking data
     ifstream inputFile;
     inputFile.open("Bookings.csv");
@@ -562,31 +562,16 @@ void updateBookingData(Booking b, Dictionary_Room roomList, Dictionary_Price pri
             getline(inputFile, bOut, ',');
             getline(inputFile, bGuestNum, ',');
             getline(inputFile, bReq);
-            // Remove the first 4 char "Room" and convert reamining char from string to integer
-            int roomNum = toInt(bRoomNumber.erase(0, 4));
-            // Convert booking ID and Number of Guest to int
-            int id = toInt(bId);
-            int guestNum = toInt(bGuestNum);
-            // Convert booking date, checkin date, checkout date from string to time
-            tm date = toDateTime(bDate);
-            tm in = toDateTime(bIn);
-            tm out = toDateTime(bOut);
-            // Get room item from room list using room number
-            Room bookedRoom = roomList.get(roomNum);
-            // Room number is not assigned to this booking yet, create a room object without room number first
-            if (bookedRoom.getRoomNum() < 0) {
-                // Find price for room type retrieve set room price for bookedRoom
-                double price = priceList.get(bRoomType).price;
-                // Set price and room type into room object
-                bookedRoom.setType(bRoomType);
-                bookedRoom.setPrice(price);
-            }
-            Booking t = Booking(id, date, bGuestName, bookedRoom, bStatus, in, out, guestNum, bReq);
-            q.enqueue(t);
+            line = bId + "," + bDate + "," + bGuestName + "," + bRoomNumber + "," + bRoomType + ","
+                + bStatus + "," + bIn + "," + bOut + "," + bGuestNum + "," + bReq;
+            
             if (toInt(bId) == b.getId())
                 found = true;
+            else
+                q.enqueue(line);
             if (!found) {
                 count++;
+                
             }            
 
         }
@@ -609,26 +594,18 @@ void updateBookingData(Booking b, Dictionary_Room roomList, Dictionary_Price pri
         csvFile << header5 << "," << header6 << "," << header7 << "," << header8 << ",";
         csvFile << header9 << "," << header10 << endl;
         while (!q.isEmpty()) {
-            count--;
+            
             if (count == 0) {
                 csvFile << b.getId() << "," << bDateStr << "," << b.getGuestName() << "," << roomNumStr << ",";
                 csvFile << b.getRoom().getType() << "," << b.getStatus() << "," << inStr << "," << outStr << ",";
                 csvFile << b.getNumOfGuest() << "," << b.getRequest() << endl;
             }
             else {
-                Booking e;
+                string e;
                 q.dequeue(e);
-                string inStrE = fromDateTime(b.getCheckIn());
-                string outStrE = fromDateTime(b.getCheckOut());
-                string bDateStrE = fromDateTime(b.getDate());
-                string roomNumStrE = "";
-                if (b.getRoom().getRoomNum() >= 0)
-                    roomNumStrE = "Room " + to_string(b.getRoom().getRoomNum());
-                csvFile << e.getId() << "," << bDateStrE << "," << e.getGuestName() << "," << roomNumStrE << ",";
-                csvFile << e.getRoom().getType() << "," << e.getStatus() << "," << inStrE << "," << outStrE << ",";
-                csvFile << e.getNumOfGuest() << "," << e.getRequest() << endl;
-            }           
-
+                csvFile << e << endl;
+            }       
+            count--;
         }
     }
     // Close file

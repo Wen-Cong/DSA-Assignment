@@ -87,7 +87,7 @@ void Queue::displayItems() {
 	if (!isEmpty()) {
 		while (!isEmpty()) {
 			dequeue(item);
-			cout << item.getId() << endl;
+			cout << item << endl;
 			tempQueue.enqueue(item);
 		}
 		while (!tempQueue.isEmpty()) {
