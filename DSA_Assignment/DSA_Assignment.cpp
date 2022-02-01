@@ -499,30 +499,92 @@ string convertOptionToRoomTypeName(string opt) {
 }
 
 bool addNewBooking(BST_Booking& bookingList, Booking b) {
-    // Insert data into booking list
-    bookingList.insert(*&b);
+    // Open booking csv file and import booking data
+    ifstream inputFile;
+    inputFile.open("Bookings.csv");
+    Queue q = Queue();
+    int count = 0;// Initialise variables
+    string bId, header1;
+    string bDate, header2;
+    string bGuestName, header3;
+    string bRoomNumber, header4;
+    string bRoomType, header5;
+    string bStatus, header6;
+    string bIn, header7;
+    string bOut, header8;
+    string bGuestNum, header9;
+    string bReq, header10;
+    // Check if file open successfully
+    if (inputFile.is_open()) {
+
+        string line;
+        getline(inputFile, header1, ',');
+        getline(inputFile, header2, ',');
+        getline(inputFile, header3, ',');
+        getline(inputFile, header4, ',');
+        getline(inputFile, header5, ',');
+        getline(inputFile, header6, ',');
+        getline(inputFile, header7, ',');
+        getline(inputFile, header8, ',');
+        getline(inputFile, header9, ',');
+        getline(inputFile, header10);
+        // Read room csv data row while it still have rows
+        while (!inputFile.eof()) {
+            getline(inputFile, bId, ',');
+            getline(inputFile, bDate, ',');
+            getline(inputFile, bGuestName, ',');
+            getline(inputFile, bRoomNumber, ',');
+            getline(inputFile, bRoomType, ',');
+            getline(inputFile, bStatus, ',');
+            getline(inputFile, bIn, ',');
+            getline(inputFile, bOut, ',');
+            getline(inputFile, bGuestNum, ',');
+            getline(inputFile, bReq);
+            if (bId == "") {
+                continue;
+            }
+            else {
+                line = bId + "," + bDate + "," + bGuestName + "," + bRoomNumber + "," + bRoomType + ","
+                    + bStatus + "," + bIn + "," + bOut + "," + bGuestNum + "," + bReq;
+                    q.enqueue(line);
+            }
+        }
+    }
+    // Close file stream
+    inputFile.close();
+    string inStr = fromDateTime(b.getCheckIn());
+    string outStr = fromDateTime(b.getCheckOut());
+    string bDateStr = fromDateTime(b.getDate());
+    string roomNumStr = "";
+    if (b.getRoom().getRoomNum() >= 0)
+        roomNumStr = "Room " + to_string(b.getRoom().getRoomNum());
     // Insert data into Excel file
     ofstream csvFile;
     // Open Bookings csv File in append mode
-    csvFile.open("Bookings.csv", ios::app);
+    csvFile.open("Bookings_New.csv", ios::app);
     // Check if file open successfully
     if (csvFile.is_open()) {
-        // Convert data to string
-        string inStr = fromDateTime(b.getCheckIn());
-        string outStr = fromDateTime(b.getCheckOut());
-        string bDateStr = fromDateTime(b.getDate());
-        string roomNumStr = "";
-        if (b.getRoom().getRoomNum() >= 0)
-            roomNumStr = "Room " + to_string(b.getRoom().getRoomNum());
-
-        // Write new row into booking csv file
+        csvFile << header1 << "," << header2 << "," << header3 << "," << header4 << ",";
+        csvFile << header5 << "," << header6 << "," << header7 << "," << header8 << ",";
+        csvFile << header9 << "," << header10 << endl;
+        while (!q.isEmpty()) {
+            string e;
+            q.dequeue(e);
+            csvFile << e << endl;
+        }
         csvFile << b.getId() << "," << bDateStr << "," << b.getGuestName() << "," << roomNumStr << ",";
         csvFile << b.getRoom().getType() << "," << b.getStatus() << "," << inStr << "," << outStr << ",";
         csvFile << b.getNumOfGuest() << "," << b.getRequest() << endl;
+        csvFile << "," << "," << "," << "," << "," << "," << "," << "," << "," << endl;
     }
+    
     // Close file
     csvFile.close();
-
+    remove("Bookings.csv");
+    // renaming the updated file with the existing file name
+    rename("Bookings_New.csv", "Bookings.csv");
+    // Insert data into booking list
+    bookingList.insert(*&b);
     return true;
 }
 void updateBookingData(Booking b) {
@@ -568,18 +630,21 @@ void updateBookingData(Booking b) {
             getline(inputFile, bOut, ',');
             getline(inputFile, bGuestNum, ',');
             getline(inputFile, bReq);
-            line = bId + "," + bDate + "," + bGuestName + "," + bRoomNumber + "," + bRoomType + ","
-                + bStatus + "," + bIn + "," + bOut + "," + bGuestNum + "," + bReq;
-            
-            if (toInt(bId) == b.getId())
-                found = true;
-            else
-                q.enqueue(line);
+            if (bId == "") {
+                continue;
+            }
+            else {
+                line = bId + "," + bDate + "," + bGuestName + "," + bRoomNumber + "," + bRoomType + ","
+                    + bStatus + "," + bIn + "," + bOut + "," + bGuestNum + "," + bReq;
+
+                if (toInt(bId) == b.getId())
+                    found = true;
+                else
+                    q.enqueue(line);
+            }
             if (!found) {
                 count++;
-                
-            }            
-
+            }
         }
     }
     // Close file stream
@@ -593,7 +658,7 @@ void updateBookingData(Booking b) {
     // Insert data into Excel file
     ofstream csvFile;
     // Open Bookings csv File in append mode
-    csvFile.open("Bookings.csv", ios::trunc);
+    csvFile.open("Bookings_New.csv", ios::app);
     // Check if file open successfully
     if (csvFile.is_open()) {
         csvFile << header1 << "," << header2 << "," << header3 << "," << header4 << ",";
@@ -613,7 +678,11 @@ void updateBookingData(Booking b) {
             }       
             count--;
         }
+        csvFile << "," << "," << "," << "," << "," << "," << "," << "," << "," << endl;
     }
     // Close file
     csvFile.close();
+    remove("Bookings.csv");
+    // renaming the updated file with the existing file name
+    rename("Bookings_New.csv", "Bookings.csv");
 }
