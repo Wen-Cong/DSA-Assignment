@@ -44,8 +44,8 @@ int charvalue(char c)
 	return charval;
 }
 
-//why not a if else selection structure? Since there is only 5
-long long Dictionary_Price::hash(PriceKeyType key)
+
+int Dictionary_Price::hash(PriceKeyType key)
 {
 	int total = 0;
 	total += charvalue(key[0]);
@@ -62,7 +62,7 @@ bool Dictionary_Price::add(PriceKeyType newKey, PriceType newItem)
 {
 	if (size < PRICE_MAX_SIZE)
 	{
-		int index = (this->hash(newKey));;
+		int index = (this->hash(newKey));
 		Node* newNode = new Node;
 		newNode->key = newKey;
 		newNode->item = newItem;

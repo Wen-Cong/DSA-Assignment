@@ -23,7 +23,7 @@ tm toDateTime(string dateString);
 string fromDateTime(tm date);
 int getMaxDay(int month, int year);
 void initRoomData(Dictionary_Room& roomList, Dictionary_Price& priceList, List& availRoom);
-void initBookingData(BST_Booking& bookingList, Dictionary_Room roomList, Dictionary_Price priceList);
+void initBookingData(BST_Booking& bookingList, Dictionary_Room& roomList, Dictionary_Price& priceList);
 void displayMainMenu(tm todayDate);
 void displayAllMonths();
 string convertOptionToRoomTypeName(string opt);
@@ -37,13 +37,11 @@ int main()
     BST_Booking bookingList = BST_Booking();
     Dictionary_Room roomList = Dictionary_Room();
     Dictionary_Price priceList = Dictionary_Price();
-    List availRoom= List();
+    List availRoom = List();
     initRoomData(roomList, priceList,availRoom);
     initBookingData(bookingList, roomList, priceList);
-    cout << "Data Loaded!" << endl;
-    bookingList.inorder();
     //Setting up the start date of the application
-    tm todayDate = toDateTime("02/04/2021");
+    tm todayDate = toDateTime("02/04/2021\n");
 
     string choice;
     while (choice != "0")
@@ -215,26 +213,34 @@ int main()
         {
             string month;
             string year;
-            // TO DO: Display for a particular month, the dates that each room is occupied
+            // Display for a particular month, the dates that each room is occupied
             cout << "\n===================== DISPLAY OCCUPIED DATES OF ROOMS =====================\n";
-            cout << "Please Enter Year: ";
+            cout << "Please Enter Year [Enter 0 to go back]: ";
             cin >> year;
+
+            // Return back to main menu if user exit
+            if (year == "0") {
+                continue;
+            }
             displayAllMonths();
             cout << "Please Choose a Month: ";
             cin >> month;
             //skip a line
             cout << endl;
+
+            // Return back to main menu if user exit
+            if (month == "0") {
+                continue;
+            }
+
             string startStr = "01/" + month + "/" + year;
             string endStr = to_string(getMaxDay((toInt(month) - 1), toInt(year))) + "/" + month + "/" + year;
             tm start = toDateTime(startStr);
             tm end = toDateTime(endStr);
 
-            //Booking targetBooking = Booking(); // This booking will only be used to check for availability
-            //targetBooking.setCheckIn(start); // Set range start
-            //targetBooking.setCheckOut(end); // Set range end
-            BST_Booking occupiedBookings;
+            BST_OccupiedBooking occupiedBookings;
             // Search all bookings that occupies a room within given date range
-            bookingList.overlapSearch(start,end, occupiedBookings, false);
+            bookingList.overlapSearch(start,end, occupiedBookings);
 
             occupiedBookings.inorder();
         }
@@ -361,7 +367,7 @@ void initRoomData(Dictionary_Room& roomList, Dictionary_Price& priceList, List& 
     inputFile.close();
 }
 
-void initBookingData(BST_Booking& bookingList, Dictionary_Room roomList, Dictionary_Price priceList) {
+void initBookingData(BST_Booking& bookingList, Dictionary_Room& roomList, Dictionary_Price& priceList) {
     // Open booking csv file and import booking data
     ifstream inputFile;
     inputFile.open("Bookings.csv");

@@ -5,9 +5,8 @@
 // Module Group : P02 
 //============================================================
 // BST_Booking.cpp - Implementation of Binary Search Tree
-// Bookings status that are only booked are stored in this BST
-// When bookings status change from booked to checkin the record will
-// be removed from this tree and inserted into the BST_Checkin tree
+// Bookings stored in this BST are sorted by check in date
+
 #include "BST_Booking.h"
 #include <time.h>
 #define max(x,y) ((x > y)? x : y)
@@ -165,18 +164,18 @@ bool isOverlapped(ItemType b1, tm b2In, tm b2Out)
 	return false;
 }
 
-void BST_Booking::overlapSearch(tm checkIn,tm checkOut, BST_Booking& bookingList, bool isBooked)
+void BST_Booking::overlapSearch(tm checkIn, tm checkOut, BST_Booking& bookingList, bool isBooked)
 {
-	return overlapSearch( root, checkIn,  checkOut, bookingList, isBooked);
+	return overlapSearch(root, checkIn, checkOut, bookingList, isBooked);
 }
 
-void BST_Booking::overlapSearch(BinaryNode* root, tm checkIn, tm checkOut, BST_Booking& bookingList,bool isBooked)
+void BST_Booking::overlapSearch(BinaryNode* root, tm checkIn, tm checkOut, BST_Booking& bookingList, bool isBooked)
 {
 	// Base Case
 	if (root == NULL)
 		return;
 
-	bool matchedQuery = isOverlapped(root->item, checkIn,checkOut);
+	bool matchedQuery = isOverlapped(root->item, checkIn, checkOut);
 
 	if (matchedQuery) {
 		//if booked == true search for only status that are booked
@@ -190,8 +189,8 @@ void BST_Booking::overlapSearch(BinaryNode* root, tm checkIn, tm checkOut, BST_B
 			if (root->item.getStatus() != "Booked") {
 				bookingList.insert(root->item);
 			}
-			
-		}		
+
+		}
 	}
 
 	// If left child of root is present and max of left child is
@@ -205,6 +204,39 @@ void BST_Booking::overlapSearch(BinaryNode* root, tm checkIn, tm checkOut, BST_B
 	// then there are some rooms occupied during the given check in and check out time
 	if (root->right != NULL && difftime(mktime(&root->right->min), mktime(&checkOut)) < 0)
 		overlapSearch(root->right, checkIn, checkOut, bookingList, isBooked);
+
+	return;
+}
+
+void BST_Booking::overlapSearch(tm checkIn, tm checkOut, BST_OccupiedBooking& bookingList)
+{
+	return overlapSearch(root, checkIn, checkOut, bookingList);
+}
+
+void BST_Booking::overlapSearch(BinaryNode* root, tm checkIn, tm checkOut, BST_OccupiedBooking& bookingList)
+{
+	// Base Case
+	if (root == NULL)
+		return;
+
+	bool matchedQuery = isOverlapped(root->item, checkIn, checkOut);
+
+	if (matchedQuery && root->item.getStatus() != "Booked") {
+		// Insert only for bookings with status that are Checked In or Checked Out
+		bookingList.insert(root->item);
+	}
+
+	// If left child of root is present and max of left child is
+	// greater than check in time of check in, 
+	// then there are some rooms occupied during the given check in and check out time
+	if (root->left != NULL && difftime(mktime(&root->left->max), mktime(&checkIn)) > 0)
+		overlapSearch(root->left, checkIn, checkOut, bookingList);
+
+	// If right child of root is present and min of right child is
+	// lesser than check out time of check out, 
+	// then there are some rooms occupied during the given check in and check out time
+	if (root->right != NULL && difftime(mktime(&root->right->min), mktime(&checkOut)) < 0)
+		overlapSearch(root->right, checkIn, checkOut, bookingList);
 
 	return;
 }
@@ -263,6 +295,7 @@ void BST_Booking::inorder()
 	else
 		inorder(root);
 }
+
 string BST_Booking::fromDateTime(tm date) {
 	// Convert tm type to string in (dd/mm/yyyy) format
 	string dateStr = "";
@@ -275,16 +308,17 @@ string BST_Booking::fromDateTime(tm date) {
 
 	return dateStr;
 }
+
 void BST_Booking::inorder(BinaryNode* t)
 {
 	if (t != NULL)
 	{
-		cout << "L" << endl;
+		//cout << "L" << endl;
 		inorder(t->left);
-		cout << "M" << endl;
-		cout << "Min " << fromDateTime(t->min) << " Max" << fromDateTime(t->max) << endl;
+		//cout << "M" << endl;
+		//cout << "Min " << fromDateTime(t->min) << "\tMax " << fromDateTime(t->max) << endl;
 		t->item.print();
-		cout << "R" << endl;
+		//cout << "R" << endl;
 		inorder(t->right);
 	}
 }
@@ -326,7 +360,8 @@ void BST_Booking::getBooking(Booking& b ,int index) {
 	else
 	{
 		int count = 0;
-		return getBooking(root, b, index , count);}
+		return getBooking(root, b, index , count);
+	}
 }
 void BST_Booking::getBooking(BinaryNode* t, Booking& b, int index, int& count) {
 	if (t != NULL) {

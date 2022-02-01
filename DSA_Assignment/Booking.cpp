@@ -120,7 +120,12 @@ void Booking::print()
 {
 	cout << "Booking ID: " << id << endl;
 	cout << "Guest Name: " << guestName << endl;
-	cout << "Room Number: " << room.getRoomNum() << endl;
+	if (room.getRoomNum() >= 0) {
+		cout << "Room Number: " << room.getRoomNum() << endl;
+	}
+	else {
+		cout << "Room Number: " << "Not Assigned" << endl;
+	}
 	cout << "Room Type: " << room.getType() << endl;
 	cout << "Status: " << status << endl;
 	cout << "Booking Date :" << date.tm_mday << "/" << date.tm_mon + 1 << "/" << date.tm_year + 1900 << " " << date.tm_hour << ":" << date.tm_min << endl;

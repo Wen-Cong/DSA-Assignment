@@ -4,7 +4,7 @@
 #include<iostream>
 using namespace std;
 
-const int PRICE_MAX_SIZE = 5;
+const int PRICE_MAX_SIZE = 7;
 
 struct PriceRoomType
 {
@@ -36,7 +36,7 @@ public:
 	// destructor
 	~Dictionary_Price();
 
-	long long hash(PriceKeyType key);
+	int hash(PriceKeyType key);
 
 	// add a new item with the specified key to the Dictionary_Price
 	// pre : none

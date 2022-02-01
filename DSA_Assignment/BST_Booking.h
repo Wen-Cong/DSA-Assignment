@@ -5,15 +5,15 @@
 // Module Group : P02 
 //============================================================
 // BST_Booking.cpp - Implementation of Binary Search Tree
-// Bookings status that are only booked are stored in this BST
-// When bookings status change from booked to checkin the record will
-// be removed from this tree and inserted into the BST_Checkin tree
+// Bookings stored in this BST are sorted by check in date
+
 #pragma once
 #include<iostream>
 using namespace std;
 #include "BinaryNode.h"
 #include "AVL_Tree.h" // AVL Tree functions
 #include "List.h"
+#include "BST_OccupiedBooking.h"
 typedef Booking ItemType;
 class BST_Booking
 {
@@ -37,9 +37,13 @@ public:
 	void overlapSearch(Booking b, BST_Booking& bookingList);
 	void overlapSearch(BinaryNode* root, Booking b, BST_Booking& bookingList);
 
-	//overlapping search with dates
+	// Overlapping search with check in and check out dates for bookings with status of booked
 	void overlapSearch(tm checkIn, tm checkOut, BST_Booking& bookingList, bool isBooked);
 	void overlapSearch(BinaryNode* root, tm checkIn, tm checkOut, BST_Booking& bookingList, bool isBooked);
+
+	// Overlapping search with check in and check out dates for bookings with status of Checked In or Checked Out
+	void overlapSearch(tm checkIn, tm checkOut, BST_OccupiedBooking& bookingList);
+	void overlapSearch(BinaryNode* root, tm checkIn, tm checkOut, BST_OccupiedBooking& bookingList);
 
 	// insert an item to the binary search tree
 	void insert(ItemType item);

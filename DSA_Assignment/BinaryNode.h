@@ -5,7 +5,7 @@
 // Module Group : P02 
 //============================================================
 #pragma once
-#include "Booking.h";
+#include "Booking.h"
 
 typedef Booking ItemType;
 
