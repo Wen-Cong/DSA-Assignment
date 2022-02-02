@@ -69,6 +69,7 @@ int main()
                 cout << "No bookings today!" << endl;
             }
             else {
+                //To-Do: Check in users.
                 int index = 0;
                 int userInput;
                 //Let user
@@ -251,9 +252,27 @@ int main()
             // TO-DO: Retrieve the most popular room type
         }
         else if (choice == "6") {
-        // To-Do: Display For a range of dates
-
-}
+            // To-Do: Display For a range of dates
+            string startDate,endDate;
+            tm startDateTM, endDateTM;
+            //Check in a guest using the booking information
+            cout << "\n===================== Display All Guest Within Time Period =====================\n";
+            cout << "Please Enter Start Date (dd/mm/yyyy): ";
+            cin >> startDate;
+            cout << "Please Enter End Date (dd/mm/yyyy): ";
+            cin >> endDate;
+            startDateTM = toDateTime(startDate);
+            endDateTM = toDateTime(endDate);
+            //setting the start date to be earlier 1 day to include checkout that lie on the same date as start date
+            startDateTM.tm_mday--;
+            //setting the end date to add additional day to include those that check in on that day
+            endDateTM.tm_mday++;
+            //Search for checkin date
+            BST_Booking bookings;
+            // Search all bookings that occupies a room within given date range
+            bookingList.overlapSearch(startDateTM, endDateTM, bookings, false);
+            bookings.inorder();
+        }
 
         else if (choice == "7") {
             // This code is used to change the date of today
@@ -265,6 +284,7 @@ int main()
             cout << endl;
             todayDate = toDateTime(dateEntered);
             cout << "Date successfully changed!\n";
+            //Suggestion to auto check people out as time move along
         }
         else
         {
@@ -461,10 +481,10 @@ void displayMainMenu(tm todayDate) {
     cout << "Today's date is " << fromDateTime(todayDate) << endl;
     cout << "[1] Check In Guest\n";
     cout << "[2] Add Booking\n";
-    cout << "[3] Display Staying Guest by Date\n";
+    cout << "[3] Display Guest Staying On A Particular Date\n";
     cout << "[4] Display Occupied Rooms by Month\n";
     cout << "[5] Display Most Popular Room Type\n";
-    cout << "[6] Display Bookings In Date Range";
+    cout << "[6] Display Bookings In Date Range\n";
     cout << "[7] Change Today's Date\n";
     cout << "[0] Exit\n\n";
     cout << "Your Choice: ";

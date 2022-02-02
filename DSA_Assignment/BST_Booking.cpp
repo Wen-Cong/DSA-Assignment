@@ -189,10 +189,7 @@ void BST_Booking::overlapSearch(BinaryNode* root, tm checkIn, tm checkOut, BST_B
 		}
 		else {
 			//Add to the list those bookings status != "Booked"
-			if (root->item.getStatus() != "Booked") {
-				bookingList.insert(root->item);
-			}
-
+			bookingList.insert(root->item);
 		}
 	}
 
