@@ -250,6 +250,10 @@ int main()
         {
             // TO-DO: Retrieve the most popular room type
         }
+        else if (choice == "6") {
+        // To-Do: Display For a range of dates
+
+}
 
         else if (choice == "7") {
             // This code is used to change the date of today
@@ -459,6 +463,8 @@ void displayMainMenu(tm todayDate) {
     cout << "[2] Add Booking\n";
     cout << "[3] Display Staying Guest by Date\n";
     cout << "[4] Display Occupied Rooms by Month\n";
+    cout << "[5] Display Most Popular Room Type\n";
+    cout << "[6] Display Bookings In Date Range";
     cout << "[7] Change Today's Date\n";
     cout << "[0] Exit\n\n";
     cout << "Your Choice: ";
@@ -582,7 +588,6 @@ bool addNewBooking(BST_Booking& bookingList, Booking b) {
         csvFile << b.getId() << "," << bDateStr << "," << b.getGuestName() << "," << roomNumStr << ",";
         csvFile << b.getRoom().getType() << "," << b.getStatus() << "," << inStr << "," << outStr << ",";
         csvFile << b.getNumOfGuest() << "," << b.getRequest() << endl;
-        csvFile << "," << "," << "," << "," << "," << "," << "," << "," << "," << endl;
     }
     
     // Close file
@@ -600,6 +605,7 @@ void updateBookingData(Booking b) {
     inputFile.open("Bookings.csv");
     Queue q = Queue();
     int count = 0;// Initialise variables
+    bool found = false;
         string bId, header1;
         string bDate, header2;
         string bGuestName,header3;
@@ -624,7 +630,7 @@ void updateBookingData(Booking b) {
         getline(inputFile, header8, ',');
         getline(inputFile, header9, ',');
         getline(inputFile, header10);
-        bool found = false;
+        
         // Read room csv data row while it still have rows
         while (!inputFile.eof()) {
             getline(inputFile, bId, ',');
@@ -671,21 +677,29 @@ void updateBookingData(Booking b) {
         csvFile << header1 << "," << header2 << "," << header3 << "," << header4 << ",";
         csvFile << header5 << "," << header6 << "," << header7 << "," << header8 << ",";
         csvFile << header9 << "," << header10 << endl;
-        while (!q.isEmpty()) {
-            
+
+            while (!q.isEmpty()) {
+                if (count == 0) {
+                    csvFile << b.getId() << "," << bDateStr << "," << b.getGuestName() << "," << roomNumStr << ",";
+                    csvFile << b.getRoom().getType() << "," << b.getStatus() << "," << inStr << "," << outStr << ",";
+                    csvFile << b.getNumOfGuest() << "," << b.getRequest() << endl;
+                }
+                else {
+                    string e;
+                    q.dequeue(e);
+                    csvFile << e << endl;
+                }
+                count--;
+            }
+            //In case the queue empty first cause the not edited version will not be added to the queue
+            // So queue length is n-1
+            // but if the booking to change is index n
+            // it will miss adding the last line hence this is to catch it.
             if (count == 0) {
                 csvFile << b.getId() << "," << bDateStr << "," << b.getGuestName() << "," << roomNumStr << ",";
                 csvFile << b.getRoom().getType() << "," << b.getStatus() << "," << inStr << "," << outStr << ",";
                 csvFile << b.getNumOfGuest() << "," << b.getRequest() << endl;
             }
-            else {
-                string e;
-                q.dequeue(e);
-                csvFile << e << endl;
-            }       
-            count--;
-        }
-        csvFile << "," << "," << "," << "," << "," << "," << "," << "," << "," << endl;
     }
     // Close file
     csvFile.close();
