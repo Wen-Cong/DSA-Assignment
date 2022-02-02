@@ -69,11 +69,9 @@ public:
 	// return the number of items in the Dictionary_Price
 	int getLength();
 
-	//------------------- Other useful functions -----------------
-
 	// display the items in the Dictionary_Price
 	void print();
 
-	// void replace(PriceKeyType key, PriceType item);
-	// bool contains(PriceKeyType key);
+	// Get the item and key for item with highest count value (Count values are number of duplicate key inserted)
+	void getHighestCount(string& key, int& count);
 };

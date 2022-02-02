@@ -203,3 +203,27 @@ void Dictionary_Price::print()
 	}
 	cout << endl;
 }
+
+void Dictionary_Price::getHighestCount(string& key, int& count)
+{
+	string highestCountKey;
+	int highestCount = 0;
+	for (int i = 0; i < PRICE_MAX_SIZE; i++)
+	{
+		if (items[i] != NULL)
+		{
+			Node* tempNode = items[i];
+			while (tempNode != NULL)
+			{
+				if (tempNode->item.count > highestCount) {
+					highestCount = tempNode->item.count;
+					highestCountKey = tempNode->key;
+				}
+				tempNode = tempNode->next;
+			}
+		}
+	}
+	count = highestCount;
+	key = highestCountKey;
+	return;
+}

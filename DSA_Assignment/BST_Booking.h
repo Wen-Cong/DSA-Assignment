@@ -14,6 +14,8 @@ using namespace std;
 #include "AVL_Tree.h" // AVL Tree functions
 #include "List.h"
 #include "BST_OccupiedBooking.h"
+#include "Dictionary_Price.h"
+
 typedef Booking ItemType;
 class BST_Booking
 {
@@ -97,5 +99,7 @@ public:
 	void updateBooking(Booking b);
 	void updateBooking(BinaryNode* t, tm checkIn, tm checkOut, Booking b);
 
+	void searchHighestRoomTypeCount(string& roomType, int& count);
+	void searchHighestRoomTypeCount(BinaryNode* t, Dictionary_Price& roomTypes);
 };
 

@@ -248,7 +248,18 @@ int main()
 
         else if (choice == "5")
         {
-            // TO-DO: Retrieve the most popular room type
+            // Search for the most popular room type
+            string roomType;
+            int count;
+            bookingList.searchHighestRoomTypeCount(roomType, count);
+            cout << "\n===================== Most Popular Room Type =====================\n\n";
+            cout << "Room Type: " << roomType << "\nNumber of Bookings Made: " << count << endl << endl;
+            cout << "==================================================================\n\n";
+        }
+
+        else if (choice == "6")
+        {
+            // TO-DO: Display all the bookings of the hotel within a given time period
         }
 
         else if (choice == "7") {
@@ -459,6 +470,8 @@ void displayMainMenu(tm todayDate) {
     cout << "[2] Add Booking\n";
     cout << "[3] Display Staying Guest by Date\n";
     cout << "[4] Display Occupied Rooms by Month\n";
+    cout << "[5] Search for the most popular room type\n";
+    cout << "[6] Display bookings within a given time period\n";
     cout << "[7] Change Today's Date\n";
     cout << "[0] Exit\n\n";
     cout << "Your Choice: ";

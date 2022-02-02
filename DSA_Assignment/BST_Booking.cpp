@@ -621,3 +621,32 @@ void BST_Booking::remove(BinaryNode*& t, ItemType item)
 		}
 	}
 }
+
+void BST_Booking::searchHighestRoomTypeCount(string& roomType, int& count)
+{
+	if (isEmpty())
+		cout << "No item found" << endl;
+	else
+	{
+		Dictionary_Price roomTypes = Dictionary_Price();
+		searchHighestRoomTypeCount(root, roomTypes);
+		roomTypes.getHighestCount(roomType, count);
+	}
+}
+
+void BST_Booking::searchHighestRoomTypeCount(BinaryNode* t, Dictionary_Price& roomTypes)
+{
+	if (t != NULL)
+	{
+		PriceRoomType rt = roomTypes.get(t->item.getRoom().getType());
+		if (rt.count < 0) { // Room Type has not been seen yet
+			// If room type is not seen before, set default count value as 1 since this is the first item of this room type
+			rt.count = 1;
+		}
+		// Add room type to room type list if duplicate is found, function will add 1 to count number of duplication
+		roomTypes.add(t->item.getRoom().getType(), rt);
+		searchHighestRoomTypeCount(t->left, roomTypes);
+		searchHighestRoomTypeCount(t->right, roomTypes);
+		return;
+	}
+}
