@@ -86,20 +86,34 @@ void BST_OccupiedBooking::insert(BinaryNode*& t, OccupiedBooking item)
 // traverse the binary search tree in inorder
 void BST_OccupiedBooking::inorder()
 {
-	cout << "\n=================== Occupied Bookings ===================\n";
+	cout << "\n==========================================================\n";
+	cout << "Dates of Occupied Rooms";
+	cout << "\n==========================================================\n\n";
 	if (isEmpty())
-		cout << "No item found" << endl;
-	else
-		inorder(root);
+		cout << "All rooms are available!" << endl;
+	else {
+		Dictionary_Room roomsAlreadySeen = Dictionary_Room();
+		inorder(root, roomsAlreadySeen);
+	}
 }
 
-void BST_OccupiedBooking::inorder(BinaryNode* t)
+void BST_OccupiedBooking::inorder(BinaryNode* t, Dictionary_Room& roomsAlreadySeen)
 {
 	if (t != NULL)
 	{
-		inorder(t->left);
-		t->item.print();
-		inorder(t->right);
+		inorder(t->left, roomsAlreadySeen);
+		// Check if room number has been read before (To format output)
+		if (roomsAlreadySeen.get(t->item.getRoom().getRoomNum()).getRoomNum() < 0) {
+			// Print room number out if room number has not been printed/read before
+			cout << "================== Room " << t->item.getRoom().getRoomNum() << " is Occupied ==================" << endl;
+			// Now add the room number to roomsAlreadySeen list as room number has been printed
+			roomsAlreadySeen.add(t->item.getRoom().getRoomNum(), t->item.getRoom());
+		}
+		// Print occupied dates of the room
+		cout << "From: " << t->item.getCheckIn().tm_mday << "/" << t->item.getCheckIn().tm_mon + 1 << "/" << t->item.getCheckIn().tm_year + 1900 << endl;
+		cout << "To: " << t->item.getCheckOut().tm_mday << "/" << t->item.getCheckOut().tm_mon + 1 << "/" << t->item.getCheckOut().tm_year + 1900 << endl;
+		cout << endl;
+		inorder(t->right, roomsAlreadySeen);
 	}
 }
 

@@ -10,6 +10,7 @@
 #include <sstream>
 #include "Room.h"
 #include "BST_Booking.h"
+#include "BST_OccupiedBooking.h"
 #include "Dictionary_Room.h"
 #include "Dictionary_Price.h"
 #include "Booking.h"
@@ -240,10 +241,16 @@ int main()
 
             BST_OccupiedBooking occupiedBookings;
             // Search all bookings that occupies a room within given date range
-            bookingList.overlapSearch(start,end, occupiedBookings);
+            bookingList.overlapSearch(start, end, occupiedBookings);
 
             occupiedBookings.inorder();
         }
+
+        else if (choice == "5")
+        {
+            // TO-DO: Retrieve the most popular room type
+        }
+
         else if (choice == "7") {
             // This code is used to change the date of today
             string dateEntered;
@@ -476,7 +483,7 @@ void displayAllMonths() {
 string convertOptionToRoomTypeName(string opt) {
     if (opt == "1")
     {
-        return "President Suite";
+        return "Deluxe City View";
     }
     else if (opt == "2")
     {
@@ -485,11 +492,11 @@ string convertOptionToRoomTypeName(string opt) {
 
     else if (opt == "3")
     {
-        return "Deluxe City View";
+        return "Executive Sea View";
     }
     else if (opt == "4")
     {
-        return "Executive Sea View";
+        return "President Suite";
     }
     else
     {

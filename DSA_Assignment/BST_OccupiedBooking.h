@@ -13,6 +13,7 @@ using namespace std;
 #include "BinaryNode.h"
 #include "AVL_Tree.h" // AVL Tree functions
 #include "List.h"
+#include "Dictionary_Room.h"
 typedef Booking OccupiedBooking;
 
 class BST_OccupiedBooking
@@ -39,7 +40,7 @@ public:
 
 	// traverse the binary search tree in inorder
 	void inorder();
-	void inorder(BinaryNode* t);
+	void inorder(BinaryNode* t, Dictionary_Room& roomsAlreadySeen);
 
 	// traverse the binary search tree in preorder
 	void preorder();

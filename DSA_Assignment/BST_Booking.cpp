@@ -6,6 +6,7 @@
 //============================================================
 // BST_Booking.cpp - Implementation of Binary Search Tree
 // Bookings stored in this BST are sorted by check in date
+#pragma once
 
 #include "BST_Booking.h"
 #include <time.h>
@@ -116,6 +117,18 @@ bool isOverlapped(ItemType b1, ItemType b2)
 	return false;
 }
 
+// Check if given two booking have overlapping check-in and check-out date range
+bool isOverlapped(ItemType b1, tm b2In, tm b2Out)
+{
+	tm b1In = b1.getCheckIn();
+	tm b1Out = b1.getCheckOut();
+
+	if ((difftime(mktime(&b1In), mktime(&b2Out)) < 0) &&
+		(difftime(mktime(&b2In), mktime(&b1Out)) < 0))
+		return true;
+	return false;
+}
+
 void BST_Booking::overlapSearch(Booking b, BST_Booking& bookingList)
 {
 	return overlapSearch(root, b, bookingList);
@@ -152,17 +165,7 @@ void BST_Booking::overlapSearch(BinaryNode* root, Booking b, BST_Booking& bookin
 		overlapSearch(root->right, b, bookingList);
 	return;
 }
-// Check if given two booking have overlapping check-in and check-out date range
-bool isOverlapped(ItemType b1, tm b2In, tm b2Out)
-{
-	tm b1In = b1.getCheckIn();
-	tm b1Out = b1.getCheckOut();
 
-	if ((difftime(mktime(&b1In), mktime(&b2Out)) < 0) &&
-		(difftime(mktime(&b2In), mktime(&b1Out)) < 0))
-		return true;
-	return false;
-}
 
 void BST_Booking::overlapSearch(tm checkIn, tm checkOut, BST_Booking& bookingList, bool isBooked)
 {
@@ -363,6 +366,7 @@ void BST_Booking::getBooking(Booking& b ,int index) {
 		return getBooking(root, b, index , count);
 	}
 }
+
 void BST_Booking::getBooking(BinaryNode* t, Booking& b, int index, int& count) {
 	if (t != NULL) {
 		getBooking(t->left, b, index, count);
@@ -433,7 +437,7 @@ void BST_Booking::updateBooking(BinaryNode* t, tm checkIn, tm checkOut, Booking 
 int BST_Booking::availRoomList(List& aRoomList, string type) {
 	List temp = List();
 	availRoomList(root, temp, type);
-for (int i = 0; i < aRoomList.getLength(); i++) {
+	for (int i = 0; i < aRoomList.getLength(); i++) {
 		if (!temp.exists(aRoomList.get(i))) {
 			return aRoomList.get(i);
 		}
