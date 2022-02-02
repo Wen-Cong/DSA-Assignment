@@ -69,6 +69,7 @@ int main()
                 cout << "No bookings today!" << endl;
             }
             else {
+                //To-Do: Check in users.
                 int index = 0;
                 int userInput;
                 //Let user
@@ -261,6 +262,28 @@ int main()
         {
             // TO-DO: Display all the bookings of the hotel within a given time period
         }
+        else if (choice == "6") {
+            // To-Do: Display For a range of dates
+            string startDate,endDate;
+            tm startDateTM, endDateTM;
+            //Check in a guest using the booking information
+            cout << "\n===================== Display All Guest Within Time Period =====================\n";
+            cout << "Please Enter Start Date (dd/mm/yyyy): ";
+            cin >> startDate;
+            cout << "Please Enter End Date (dd/mm/yyyy): ";
+            cin >> endDate;
+            startDateTM = toDateTime(startDate);
+            endDateTM = toDateTime(endDate);
+            //setting the start date to be earlier 1 day to include checkout that lie on the same date as start date
+            startDateTM.tm_mday--;
+            //setting the end date to add additional day to include those that check in on that day
+            endDateTM.tm_mday++;
+            //Search for checkin date
+            BST_Booking bookings;
+            // Search all bookings that occupies a room within given date range
+            bookingList.overlapSearch(startDateTM, endDateTM, bookings, false);
+            bookings.inorder();
+        }
 
         else if (choice == "7") {
             // This code is used to change the date of today
@@ -272,6 +295,7 @@ int main()
             cout << endl;
             todayDate = toDateTime(dateEntered);
             cout << "Date successfully changed!\n";
+            //Suggestion to auto check people out as time move along
         }
         else
         {
@@ -468,7 +492,7 @@ void displayMainMenu(tm todayDate) {
     cout << "Today's date is " << fromDateTime(todayDate) << endl;
     cout << "[1] Check In Guest\n";
     cout << "[2] Add Booking\n";
-    cout << "[3] Display Staying Guest by Date\n";
+    cout << "[3] Display Guest Staying On A Particular Date\n";
     cout << "[4] Display Occupied Rooms by Month\n";
     cout << "[5] Search for the most popular room type\n";
     cout << "[6] Display bookings within a given time period\n";
@@ -595,7 +619,6 @@ bool addNewBooking(BST_Booking& bookingList, Booking b) {
         csvFile << b.getId() << "," << bDateStr << "," << b.getGuestName() << "," << roomNumStr << ",";
         csvFile << b.getRoom().getType() << "," << b.getStatus() << "," << inStr << "," << outStr << ",";
         csvFile << b.getNumOfGuest() << "," << b.getRequest() << endl;
-        csvFile << "," << "," << "," << "," << "," << "," << "," << "," << "," << endl;
     }
     
     // Close file
@@ -613,6 +636,7 @@ void updateBookingData(Booking b) {
     inputFile.open("Bookings.csv");
     Queue q = Queue();
     int count = 0;// Initialise variables
+    bool found = false;
         string bId, header1;
         string bDate, header2;
         string bGuestName,header3;
@@ -637,7 +661,7 @@ void updateBookingData(Booking b) {
         getline(inputFile, header8, ',');
         getline(inputFile, header9, ',');
         getline(inputFile, header10);
-        bool found = false;
+        
         // Read room csv data row while it still have rows
         while (!inputFile.eof()) {
             getline(inputFile, bId, ',');
@@ -684,21 +708,29 @@ void updateBookingData(Booking b) {
         csvFile << header1 << "," << header2 << "," << header3 << "," << header4 << ",";
         csvFile << header5 << "," << header6 << "," << header7 << "," << header8 << ",";
         csvFile << header9 << "," << header10 << endl;
-        while (!q.isEmpty()) {
-            
+
+            while (!q.isEmpty()) {
+                if (count == 0) {
+                    csvFile << b.getId() << "," << bDateStr << "," << b.getGuestName() << "," << roomNumStr << ",";
+                    csvFile << b.getRoom().getType() << "," << b.getStatus() << "," << inStr << "," << outStr << ",";
+                    csvFile << b.getNumOfGuest() << "," << b.getRequest() << endl;
+                }
+                else {
+                    string e;
+                    q.dequeue(e);
+                    csvFile << e << endl;
+                }
+                count--;
+            }
+            //In case the queue empty first cause the not edited version will not be added to the queue
+            // So queue length is n-1
+            // but if the booking to change is index n
+            // it will miss adding the last line hence this is to catch it.
             if (count == 0) {
                 csvFile << b.getId() << "," << bDateStr << "," << b.getGuestName() << "," << roomNumStr << ",";
                 csvFile << b.getRoom().getType() << "," << b.getStatus() << "," << inStr << "," << outStr << ",";
                 csvFile << b.getNumOfGuest() << "," << b.getRequest() << endl;
             }
-            else {
-                string e;
-                q.dequeue(e);
-                csvFile << e << endl;
-            }       
-            count--;
-        }
-        csvFile << "," << "," << "," << "," << "," << "," << "," << "," << "," << endl;
     }
     // Close file
     csvFile.close();
