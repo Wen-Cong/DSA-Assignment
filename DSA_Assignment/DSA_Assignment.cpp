@@ -153,6 +153,12 @@ int main()
             tm out = toDateTime(checkOut);
             string roomType = convertOptionToRoomTypeName(roomTypeChoice);
 
+            // Check if check out date input is later than check in date input
+            if (difftime(mktime(&in), mktime(&out)) > 0) {
+                cout << "\nInvalid Dates .Check out date must be after check in date.\n\n";
+                continue;
+            }
+
             // Set price and room type into room object to be added to booking object
             Room r = Room();
             r.setPrice(priceList.get(roomType).price);
