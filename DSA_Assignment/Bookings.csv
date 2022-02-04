@@ -99,9 +99,3 @@ Booking ID,Booking Date,Guest Name,Room #,Room Type,Status,Check In,Check Out,Gu
 98,25/3/2021 23:54,Melissa Thompson,Room 103,Executive Sea View,Checked In,31/3/2021,5/4/2021,2,
 99,27/3/2021 20:44,Stuart Johnston, ,Deluxe City View,Booked,2/4/2021,3/4/2021,3,
 100,29/3/2021 23:52,Freddie Payne,,Executive Sea View,Booked,12/4/2021,18/4/2021,2,
-101,2/2/2022 21:43,Yeo,,Standard City View,Booked,20/4/2021,24/4/2021,3,Nil
-102,2/2/2022 21:44,Hello,,Deluxe City View,Booked,28/3/2021,25/4/2021,2,Nil
-103,2/2/2022 21:44,Wen,,Deluxe City View,Booked,28/3/2021,24/4/2021,2,
-104,2/2/2022 21:44,C,,Deluxe City View,Booked,28/3/2021,29/4/2021,1,
-105,2/2/2022 21:45,W,,Deluxe City View,Booked,20/3/2021,24/4/2021,2,
-,,,,,,,,,

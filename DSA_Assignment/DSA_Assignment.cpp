@@ -123,13 +123,31 @@ int main()
             cout << "\n===================== ADD BOOKING =====================\n";
             // Display all rooms type and respective price tags
             priceList.print();
+            cout << "Enter [0] Anytime to Cancel" << endl;
             // Prompt user for room type choice, check in date and check out date
             cout << "\nPlease Choose a Room Type: ";
             cin >> roomTypeChoice;
+            // Go back to main menu if user enter 0 (cancels)
+            if (roomTypeChoice == "0") {
+                cout << endl;
+                continue;
+            }
+
             cout << "Please Enter Check In Date (dd/mm/yyyy): ";
             cin >> checkIn;
+            // Go back to main menu if user enter 0 (cancels)
+            if (checkIn == "0") {
+                cout << endl;
+                continue;
+            }
+
             cout << "Please Enter Check Out Date (dd/mm/yyyy): ";
             cin >> checkOut;
+            // Go back to main menu if user enter 0 (cancels)
+            if (checkOut == "0") {
+                cout << endl;
+                continue;
+            }
 
             tm in = toDateTime(checkIn);
             tm out = toDateTime(checkOut);
@@ -161,11 +179,28 @@ int main()
             cout << "Please Enter Name of Representative: ";
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             getline(cin, guestName);
+            // Go back to main menu if user enter 0 (cancels)
+            if (guestName == "0") {
+                cout << endl;
+                continue;
+            }
+
             cout << "Please Enter the Number of Guest: ";
             cin >> numOfGuest;
+            // Go back to main menu if user enter 0 (cancels)
+            if (numOfGuest == "0") {
+                cout << endl;
+                continue;
+            }
+
             cout << "Please Enter Special Request (If any): ";
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             getline(cin, specReq);
+            // Go back to main menu if user enter 0 (cancels)
+            if (specReq == "0") {
+                cout << endl;
+                continue;
+            }
 
             // Get current date time to be set as booking time
             time_t t = time(0); // get current time
