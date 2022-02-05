@@ -39,7 +39,7 @@
     <ClCompile Include="Dictionary_Price.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BST_Booking.cpp">
+    <ClCompile Include="IT_Booking.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="List.cpp">
@@ -65,7 +65,7 @@
     <ClInclude Include="Dictionary_Price.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BST_Booking.h">
+    <ClInclude Include="IT_Booking.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="List.h">

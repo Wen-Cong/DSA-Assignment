@@ -9,7 +9,7 @@
 #include <string>
 #include <sstream>
 #include "Room.h"
-#include "BST_Booking.h"
+#include "IT_Booking.h"
 #include "BST_OccupiedBooking.h"
 #include "Dictionary_Room.h"
 #include "Dictionary_Price.h"
@@ -34,7 +34,7 @@ int getMaxDay(int month, int year);
 void initRoomData(Dictionary_Room& roomList, Dictionary_Price& priceList, List& availRoom);
 
 // Read from booking csv file and initialise booking data to interval tree
-void initBookingData(BST_Booking& bookingList, Dictionary_Room& roomList, Dictionary_Price& priceList);
+void initBookingData(IT_Booking& bookingList, Dictionary_Room& roomList, Dictionary_Price& priceList);
 
 // Print all main menu options
 void displayMainMenu(tm todayDate);
@@ -46,7 +46,7 @@ void displayAllMonths();
 string convertOptionToRoomTypeName(string opt);
 
 // Insert booking to booking collection and append data to booking csv file
-bool addNewBooking(BST_Booking& bookingList, Booking b);
+bool addNewBooking(IT_Booking& bookingList, Booking b);
 
 // Update booking data in csv file for any editing changes made to booking data
 void updateBookingData(Booking b);
@@ -55,7 +55,7 @@ int main()
 {
     cout << "Initialising Data, Please wait..." << endl << endl;
     // Initialise room data using dictionary data structure
-    BST_Booking bookingList = BST_Booking();
+    IT_Booking bookingList = IT_Booking();
     Dictionary_Room roomList = Dictionary_Room();
     Dictionary_Price priceList = Dictionary_Price();
     List availRoom = List();
@@ -79,7 +79,7 @@ int main()
             cout << "Today's Date: " << fromDateTime(todayDate) << endl;
 
             //Search for checkin date that falls on today's date
-            BST_Booking booking;
+            IT_Booking booking;
             // Search all bookings that are booked today
             bookingList.overlapSearch(todayDate, todayDate, booking, "True");
             if (booking.isEmpty()) {
@@ -102,7 +102,7 @@ int main()
                     // get the booking details from the user input.
                     booking.getBooking(target, userInput);
                     // Interval tree for occupied room
-                    BST_Booking occupiedRoom;
+                    IT_Booking occupiedRoom;
                     // List for rooms that are available
                     List availRoomList;
                     //Search if any room is occupied during this time period
@@ -202,7 +202,7 @@ int main()
             r.setType(roomType);
 
             Booking targetBooking = Booking(r, in, out); // This booking will only be used to check for availability
-            BST_Booking occupiedBookings;
+            IT_Booking occupiedBookings;
 
             // Check availability of room based on room type, check in date and check out date.
             int totalNumOfRoom = priceList.get(roomType).count;
@@ -278,7 +278,7 @@ int main()
                 //Convert to TM Struct
                 dateInput = toDateTime(selectedDate);
                 //Search for checkin date
-                BST_Booking bookings;
+                IT_Booking bookings;
                 // Search all bookings that occupies a room within given date range
                 bookingList.overlapSearch(dateInput, dateInput, bookings, "All");
                 if (bookings.countNodes() > 0) {
@@ -357,7 +357,7 @@ int main()
                 }
                 else {
                     //Search for checkin date
-                    BST_Booking bookings;
+                    IT_Booking bookings;
                     // Search all bookings that occupies a room within given date range
                     bookingList.overlapSearch(startDateTM, endDateTM, bookings, "All");
                     if (bookings.countNodes() > 0) {
@@ -496,7 +496,7 @@ void initRoomData(Dictionary_Room& roomList, Dictionary_Price& priceList, List& 
     inputFile.close();
 }
 
-void initBookingData(BST_Booking& bookingList, Dictionary_Room& roomList, Dictionary_Price& priceList) {
+void initBookingData(IT_Booking& bookingList, Dictionary_Room& roomList, Dictionary_Price& priceList) {
     // Open booking csv file and import booking data
     ifstream inputFile;
     inputFile.open("Bookings.csv");
@@ -629,7 +629,7 @@ string convertOptionToRoomTypeName(string opt) {
     }
 }
 
-bool addNewBooking(BST_Booking& bookingList, Booking b) {
+bool addNewBooking(IT_Booking& bookingList, Booking b) {
     // Open booking csv file and import booking data
     ifstream inputFile;
     inputFile.open("Bookings.csv");

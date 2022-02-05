@@ -4,7 +4,7 @@
 // Team Number : 10
 // Module Group : P02 
 //============================================================
-// BST_Booking Interval tree
+// IT_Booking Interval tree
 // Bookings stored in this Interval tree are sorted by check in date
 
 #pragma once
@@ -17,7 +17,7 @@ using namespace std;
 #include "Dictionary_Price.h"
 
 typedef Booking ItemType;
-class BST_Booking
+class IT_Booking
 {
 private:
 	BinaryNode* root;		// root of the BST
@@ -25,21 +25,21 @@ private:
 public:
 
 	// constructor
-	BST_Booking();
+	IT_Booking();
 
 	
 
 	// Search for overlapping check in and check out dates for bookings
 	// pre : none
 	// post: none
-	void overlapSearch(Booking b, BST_Booking& bookingList);
-	void overlapSearch(BinaryNode* root, Booking b, BST_Booking& bookingList);
+	void overlapSearch(Booking b, IT_Booking& bookingList);
+	void overlapSearch(BinaryNode* root, Booking b, IT_Booking& bookingList);
 
 	// Overlapping search with check in and check out dates for bookings To include only "Booked" or exclude "Booked" or all status
 	// pre : none
 	// post: none
-	void overlapSearch(tm checkIn, tm checkOut, BST_Booking& bookingList, string isBooked);
-	void overlapSearch(BinaryNode* root, tm checkIn, tm checkOut, BST_Booking& bookingList, string isBooked);
+	void overlapSearch(tm checkIn, tm checkOut, IT_Booking& bookingList, string isBooked);
+	void overlapSearch(BinaryNode* root, tm checkIn, tm checkOut, IT_Booking& bookingList, string isBooked);
 
 	// Overlapping search with check in and check out dates for bookings with status of Checked In or Checked Out
 	// pre : none

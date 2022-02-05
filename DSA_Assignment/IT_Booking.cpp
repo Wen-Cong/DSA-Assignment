@@ -4,20 +4,19 @@
 // Team Number : 10
 // Module Group : P02 
 //============================================================
-// BST_Booking.cpp - Implementation of Interval Tree
+// IT_Booking.cpp - Implementation of Interval Tree
 // Bookings stored in this IT are sorted by check in date
 #pragma once
 
-#include "BST_Booking.h"
+#include "IT_Booking.h"
 #include <time.h>
 #define max(x,y) ((x > y)? x : y)
 
 // constructor
-BST_Booking::BST_Booking()
+IT_Booking::IT_Booking()
 {
 	root = NULL;
 }
-
 
 
 // Check if given two booking have overlapping check-in and check-out date range
@@ -47,12 +46,12 @@ bool isOverlapped(ItemType b1, tm b2In, tm b2Out)
 	return false;
 }
 
-void BST_Booking::overlapSearch(Booking b, BST_Booking& bookingList)
+void IT_Booking::overlapSearch(Booking b, IT_Booking& bookingList)
 {
 	return overlapSearch(root, b, bookingList);
 }
 
-void BST_Booking::overlapSearch(BinaryNode* root, Booking b, BST_Booking& bookingList)
+void IT_Booking::overlapSearch(BinaryNode* root, Booking b, IT_Booking& bookingList)
 {
 	// Base Case
 	if (root == NULL)
@@ -85,12 +84,12 @@ void BST_Booking::overlapSearch(BinaryNode* root, Booking b, BST_Booking& bookin
 }
 
 
-void BST_Booking::overlapSearch(tm checkIn, tm checkOut, BST_Booking& bookingList, string isBooked)
+void IT_Booking::overlapSearch(tm checkIn, tm checkOut, IT_Booking& bookingList, string isBooked)
 {
 	return overlapSearch(root, checkIn, checkOut, bookingList, isBooked);
 }
 
-void BST_Booking::overlapSearch(BinaryNode* root, tm checkIn, tm checkOut, BST_Booking& bookingList, string isBooked)
+void IT_Booking::overlapSearch(BinaryNode* root, tm checkIn, tm checkOut, IT_Booking& bookingList, string isBooked)
 {
 	// Base Case
 	if (root == NULL)
@@ -133,12 +132,12 @@ void BST_Booking::overlapSearch(BinaryNode* root, tm checkIn, tm checkOut, BST_B
 	return;
 }
 
-void BST_Booking::overlapSearch(tm checkIn, tm checkOut, BST_OccupiedBooking& bookingList)
+void IT_Booking::overlapSearch(tm checkIn, tm checkOut, BST_OccupiedBooking& bookingList)
 {
 	return overlapSearch(root, checkIn, checkOut, bookingList);
 }
 
-void BST_Booking::overlapSearch(BinaryNode* root, tm checkIn, tm checkOut, BST_OccupiedBooking& bookingList)
+void IT_Booking::overlapSearch(BinaryNode* root, tm checkIn, tm checkOut, BST_OccupiedBooking& bookingList)
 {
 	// Base Case
 	if (root == NULL)
@@ -167,12 +166,12 @@ void BST_Booking::overlapSearch(BinaryNode* root, tm checkIn, tm checkOut, BST_O
 }
 
 // insert an item to the binary search tree
-void BST_Booking::insert(ItemType item)
+void IT_Booking::insert(ItemType item)
 {
 	insert(root, item);
 }
 
-void BST_Booking::insert(BinaryNode*& t, ItemType item)
+void IT_Booking::insert(BinaryNode*& t, ItemType item)
 {
 	if (t == NULL)
 	{
@@ -213,7 +212,7 @@ void BST_Booking::insert(BinaryNode*& t, ItemType item)
 
 
 // traverse the binary search tree in inorder
-void BST_Booking::inorder()
+void IT_Booking::inorder()
 {
 	if (isEmpty())
 		cout << "No item found" << endl;
@@ -223,7 +222,7 @@ void BST_Booking::inorder()
 
 
 
-void BST_Booking::inorder(BinaryNode* t)
+void IT_Booking::inorder(BinaryNode* t)
 {
 	if (t != NULL)
 	{
@@ -240,7 +239,7 @@ void BST_Booking::inorder(BinaryNode* t)
 
 
 // traverse the binary search tree in preorder
-void BST_Booking::preorder()
+void IT_Booking::preorder()
 {
 	if (isEmpty())
 		cout << "No item found" << endl;
@@ -248,7 +247,7 @@ void BST_Booking::preorder()
 		preorder(root);
 }
 
-void BST_Booking::preorder(BinaryNode* t)
+void IT_Booking::preorder(BinaryNode* t)
 {
 	if (t != NULL)
 	{
@@ -259,7 +258,7 @@ void BST_Booking::preorder(BinaryNode* t)
 }
 
 // traverse the binary search tree in postorder
-void BST_Booking::postorder()
+void IT_Booking::postorder()
 {
 	if (isEmpty())
 		cout << "No item found" << endl;
@@ -267,7 +266,7 @@ void BST_Booking::postorder()
 		postorder(root);
 }
 
-void BST_Booking::postorder(BinaryNode* t)
+void IT_Booking::postorder(BinaryNode* t)
 {
 	if (t != NULL)
 	{
@@ -278,18 +277,18 @@ void BST_Booking::postorder(BinaryNode* t)
 }
 
 // check if the binary search tree is empty
-bool BST_Booking::isEmpty()
+bool IT_Booking::isEmpty()
 {
 	return (root == NULL);
 }
 
 // count the number of roots in the binary search tree
-int BST_Booking::countNodes()
+int IT_Booking::countNodes()
 {
 	return countNodes(root);
 }
 
-int BST_Booking::countNodes(BinaryNode* t)
+int IT_Booking::countNodes(BinaryNode* t)
 {
 	if (t == NULL)
 		return 0;
@@ -298,12 +297,12 @@ int BST_Booking::countNodes(BinaryNode* t)
 }
 
 // compute the height of the binary search tree
-int BST_Booking::getHeight()
+int IT_Booking::getHeight()
 {
 	return getHeight(root);
 }
 
-int BST_Booking::getHeight(BinaryNode* t)
+int IT_Booking::getHeight(BinaryNode* t)
 {
 	if (t == NULL)
 		return 0;
@@ -317,12 +316,12 @@ int BST_Booking::getHeight(BinaryNode* t)
 }
 
 // check if the binary search tree is balanced
-bool BST_Booking::isBalanced()
+bool IT_Booking::isBalanced()
 {
 	return isBalanced(root);
 }
 
-bool BST_Booking::isBalanced(BinaryNode* t)
+bool IT_Booking::isBalanced(BinaryNode* t)
 {
 	if (t == NULL)
 		return true;
@@ -338,7 +337,7 @@ bool BST_Booking::isBalanced(BinaryNode* t)
 }
 
 // delete an item from the binary search tree
-void BST_Booking::remove(ItemType target)
+void IT_Booking::remove(ItemType target)
 {
 	remove(root, target);
 	balanceTree(root);			// AVL Tree function
@@ -346,7 +345,7 @@ void BST_Booking::remove(ItemType target)
 
 
 
-void BST_Booking::remove(BinaryNode*& t, ItemType item)
+void IT_Booking::remove(BinaryNode*& t, ItemType item)
 {
 	if (t != NULL)
 	{
@@ -402,7 +401,7 @@ void BST_Booking::remove(BinaryNode*& t, ItemType item)
 	}
 }
 //Find the first available room number.
-int BST_Booking::availRoomList(List& aRoomList, string type) {
+int IT_Booking::availRoomList(List& aRoomList, string type) {
 	List temp = List();
 	availRoomList(root, temp, type);
 	for (int i = 0; i < aRoomList.getLength(); i++) {
@@ -413,7 +412,7 @@ int BST_Booking::availRoomList(List& aRoomList, string type) {
 	
 	return -1;
 }
-void BST_Booking::availRoomList(BinaryNode* t, List& aRoomList, string type) {
+void IT_Booking::availRoomList(BinaryNode* t, List& aRoomList, string type) {
 	if (t != NULL) {
 		availRoomList(t->left, aRoomList, type);
 		if (t->item.getRoom().getType() == type) {
@@ -428,7 +427,7 @@ void BST_Booking::availRoomList(BinaryNode* t, List& aRoomList, string type) {
 }
 
 // print the option number and relevant booking details
-void BST_Booking::printOption(int& index)
+void IT_Booking::printOption(int& index)
 {
 	if (isEmpty())
 		cout << "No item found" << endl;
@@ -436,7 +435,7 @@ void BST_Booking::printOption(int& index)
 		return printOption(root,index);
 }
 // print option
-void BST_Booking::printOption(BinaryNode* t, int& index) {
+void IT_Booking::printOption(BinaryNode* t, int& index) {
 	if (t != NULL) {
 		printOption(t->left, index);
 		index++;
@@ -451,7 +450,7 @@ void BST_Booking::printOption(BinaryNode* t, int& index) {
 }
 
 //get booking witht the selected index
-void BST_Booking::getBooking(Booking& b ,int index) {
+void IT_Booking::getBooking(Booking& b ,int index) {
 	if (isEmpty()) {
 		cout << "No items found" << endl;
 	}
@@ -462,7 +461,7 @@ void BST_Booking::getBooking(Booking& b ,int index) {
 	}
 }
 
-void BST_Booking::getBooking(BinaryNode* t, Booking& b, int index, int& count) {
+void IT_Booking::getBooking(BinaryNode* t, Booking& b, int index, int& count) {
 	if (t != NULL) {
 		getBooking(t->left, b, index, count);
 		count++;
@@ -474,7 +473,7 @@ void BST_Booking::getBooking(BinaryNode* t, Booking& b, int index, int& count) {
 	}
 }
 // update booking details
-void BST_Booking::updateBooking(Booking b) {
+void IT_Booking::updateBooking(Booking b) {
 	if (isEmpty()) {
 		cout << "No items found" << endl;
 	}
@@ -487,7 +486,7 @@ void BST_Booking::updateBooking(Booking b) {
 		return updateBooking(root, checkin, checkout, b);
 	}
 }
-void BST_Booking::updateBooking(BinaryNode* t, tm checkIn, tm checkOut, Booking b) {
+void IT_Booking::updateBooking(BinaryNode* t, tm checkIn, tm checkOut, Booking b) {
 	// Base Case
 	if (t == NULL)
 		return;
@@ -514,7 +513,7 @@ void BST_Booking::updateBooking(BinaryNode* t, tm checkIn, tm checkOut, Booking 
 	return;
 }
 
-void BST_Booking::searchHighestRoomTypeCount(string& roomType, int& count)
+void IT_Booking::searchHighestRoomTypeCount(string& roomType, int& count)
 {
 	if (isEmpty())
 		cout << "No item found" << endl;
@@ -526,7 +525,7 @@ void BST_Booking::searchHighestRoomTypeCount(string& roomType, int& count)
 	}
 }
 
-void BST_Booking::searchHighestRoomTypeCount(BinaryNode* t, Dictionary_Price& roomTypes)
+void IT_Booking::searchHighestRoomTypeCount(BinaryNode* t, Dictionary_Price& roomTypes)
 {
 	if (t != NULL)
 	{
@@ -542,10 +541,10 @@ void BST_Booking::searchHighestRoomTypeCount(BinaryNode* t, Dictionary_Price& ro
 		return;
 	}
 }
-void BST_Booking::printDetails() {
+void IT_Booking::printDetails() {
 	printDetails(root);
 }
-void BST_Booking::printDetails(BinaryNode* t) {
+void IT_Booking::printDetails(BinaryNode* t) {
 	if (t != NULL) {
 		printDetails(t->left);
 		cout << endl;
@@ -560,7 +559,7 @@ void BST_Booking::printDetails(BinaryNode* t) {
 	}
 }
 //Code Used in debugging to convert tm struct into string
-//string BST_Booking::fromDateTime(tm date) {
+//string IT_Booking::fromDateTime(tm date) {
 //	// Convert tm type to string in (dd/mm/yyyy) format
 //	string dateStr = "";
 //	// Append year, month and day in human readable format
@@ -575,12 +574,12 @@ void BST_Booking::printDetails(BinaryNode* t) {
 // 
 // Codes not in use
 //// search an item in the binary search tree
-//BinaryNode* BST_Booking::search(ItemType target)
+//BinaryNode* IT_Booking::search(ItemType target)
 //{
 //	return search(root, target);
 //}
 //
-//BinaryNode* BST_Booking::search(BinaryNode* t, ItemType target)
+//BinaryNode* IT_Booking::search(BinaryNode* t, ItemType target)
 //{
 //	if (t == NULL)	// item not found
 //		return NULL;
@@ -605,12 +604,12 @@ void BST_Booking::printDetails(BinaryNode* t) {
 //}
 
 // //search for range of items in the binary search tree and return count
-//int BST_Booking::searchRange(tm checkin, tm checkout, string roomType)
+//int IT_Booking::searchRange(tm checkin, tm checkout, string roomType)
 //{
 //	return searchRange(root, checkin, checkout, roomType);
 //}
 
-//int BST_Booking::searchRange(BinaryNode* root, tm checkin, tm checkout, string roomType)
+//int IT_Booking::searchRange(BinaryNode* root, tm checkin, tm checkout, string roomType)
 //{
 //	if (root == NULL)
 //	{

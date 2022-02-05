@@ -4,6 +4,7 @@
 // Team Number : 10
 // Module Group : P02 
 //============================================================
+#pragma once
 #include "Room.h"
 
 Room::Room(){}
