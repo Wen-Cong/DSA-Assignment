@@ -40,8 +40,8 @@ public:
 	void overlapSearch(BinaryNode* root, Booking b, BST_Booking& bookingList);
 
 	// Overlapping search with check in and check out dates for bookings with status of booked
-	void overlapSearch(tm checkIn, tm checkOut, BST_Booking& bookingList, bool isBooked);
-	void overlapSearch(BinaryNode* root, tm checkIn, tm checkOut, BST_Booking& bookingList, bool isBooked);
+	void overlapSearch(tm checkIn, tm checkOut, BST_Booking& bookingList, string isBooked);
+	void overlapSearch(BinaryNode* root, tm checkIn, tm checkOut, BST_Booking& bookingList, string isBooked);
 
 	// Overlapping search with check in and check out dates for bookings with status of Checked In or Checked Out
 	void overlapSearch(tm checkIn, tm checkOut, BST_OccupiedBooking& bookingList);
@@ -82,11 +82,6 @@ public:
 	bool isBalanced();
 	bool isBalanced(BinaryNode* t);
 
-	string fromDateTime(tm date);
-	// to transfer to List for display
-	/*void transferList(List& displayList);
-	void transferList(BinaryNode* t,List& displayList);*/
-
 	int availRoomList(List& aRoomList, string type);
 	void availRoomList(BinaryNode* t, List& aRoomList, string type);
 
@@ -101,5 +96,10 @@ public:
 
 	void searchHighestRoomTypeCount(string& roomType, int& count);
 	void searchHighestRoomTypeCount(BinaryNode* t, Dictionary_Price& roomTypes);
+
+	void printDetails();
+	void printDetails(BinaryNode* t);
+	//Code Used in debugging to convert tm struct into string
+	/*string fromDateTime(tm date);*/
 };
 

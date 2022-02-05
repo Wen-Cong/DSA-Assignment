@@ -122,9 +122,10 @@ bool isOverlapped(ItemType b1, tm b2In, tm b2Out)
 {
 	tm b1In = b1.getCheckIn();
 	tm b1Out = b1.getCheckOut();
-
-	if ((difftime(mktime(&b1In), mktime(&b2Out)) < 0) &&
-		(difftime(mktime(&b2In), mktime(&b1Out)) < 0))
+	//Check if target end date is later than or equals to the checkin date
+	if ((difftime(mktime(&b1In), mktime(&b2Out)) <= 0) &&
+		// Check if the target start date is earlier than or equals to the checkout date
+		(difftime(mktime(&b2In), mktime(&b1Out)) <= 0))
 		return true;
 	return false;
 }
@@ -167,42 +168,49 @@ void BST_Booking::overlapSearch(BinaryNode* root, Booking b, BST_Booking& bookin
 }
 
 
-void BST_Booking::overlapSearch(tm checkIn, tm checkOut, BST_Booking& bookingList, bool isBooked)
+void BST_Booking::overlapSearch(tm checkIn, tm checkOut, BST_Booking& bookingList, string isBooked)
 {
 	return overlapSearch(root, checkIn, checkOut, bookingList, isBooked);
 }
 
-void BST_Booking::overlapSearch(BinaryNode* root, tm checkIn, tm checkOut, BST_Booking& bookingList, bool isBooked)
+void BST_Booking::overlapSearch(BinaryNode* root, tm checkIn, tm checkOut, BST_Booking& bookingList, string isBooked)
 {
 	// Base Case
 	if (root == NULL)
 		return;
-
+	// If left child of root is present and max of left child is
+	// greater than check in time of check in, 
+	// then there are some rooms occupied during the given check in and check out time
+	if (root->left != NULL && difftime(mktime(&root->left->max), mktime(&checkIn)) >= 0)
+		overlapSearch(root->left, checkIn, checkOut, bookingList, isBooked);
 	bool matchedQuery = isOverlapped(root->item, checkIn, checkOut);
 
 	if (matchedQuery) {
-		//if booked == true search for only status that are booked
-		if (isBooked) {
+		if (isBooked == "All") {
+			//Insert into the list those that are not booked
+			bookingList.insert(root->item);
+		}
+		else if (isBooked == "True")//if booked == "True" search for only status that are booked
+		 {
 			if (root->item.getStatus() == "Booked") {
 				bookingList.insert(root->item);
 			}
 		}
+		// if isbooked = "False" search for only status that are not booked
+		else if (isBooked == "False") {
+			if (root->item.getStatus() != "Booked") {
+				bookingList.insert(root->item);
+			}
+		}
 		else {
-			//Add to the list those bookings status != "Booked"
+			//Insert into the list those that are not booked
 			bookingList.insert(root->item);
 		}
 	}
-
-	// If left child of root is present and max of left child is
-	// greater than check in time of check in, 
-	// then there are some rooms occupied during the given check in and check out time
-	if (root->left != NULL && difftime(mktime(&root->left->max), mktime(&checkIn)) > 0)
-		overlapSearch(root->left, checkIn, checkOut, bookingList, isBooked);
-
 	// If right child of root is present and min of right child is
 	// lesser than check out time of check out, 
 	// then there are some rooms occupied during the given check in and check out time
-	if (root->right != NULL && difftime(mktime(&root->right->min), mktime(&checkOut)) < 0)
+	if (root->right != NULL && difftime(mktime(&root->right->min), mktime(&checkOut)) <= 0)
 		overlapSearch(root->right, checkIn, checkOut, bookingList, isBooked);
 
 	return;
@@ -296,23 +304,13 @@ void BST_Booking::inorder()
 		inorder(root);
 }
 
-string BST_Booking::fromDateTime(tm date) {
-	// Convert tm type to string in (dd/mm/yyyy) format
-	string dateStr = "";
-	// Append year, month and day in human readable format
-	dateStr = to_string(date.tm_mday) + "/" + to_string(date.tm_mon + 1) + "/" + to_string(date.tm_year + 1900);
-	// If hour and minute is found, append hour and minute
-	if (date.tm_hour != NULL && date.tm_min != NULL) {
-		dateStr += " " + to_string(date.tm_hour) + ":" + to_string(date.tm_min);
-	}
 
-	return dateStr;
-}
 
 void BST_Booking::inorder(BinaryNode* t)
 {
 	if (t != NULL)
 	{
+		//Note: couts are used to debug interval tree to check if the tree is balanced
 		//cout << "L" << endl;
 		inorder(t->left);
 		//cout << "M" << endl;
@@ -322,139 +320,7 @@ void BST_Booking::inorder(BinaryNode* t)
 		inorder(t->right);
 	}
 }
-// traverse the binary search tree in inorder
-void BST_Booking::printOption(int& index)
-{
-	if (isEmpty())
-		cout << "No item found" << endl;
-	else
-		return printOption(root,index);
-}
-// print option
-void BST_Booking::printOption(BinaryNode* t, int& index) {
-	if (t != NULL) {
-		printOption(t->left, index);
-		index++;
-		tm date = t->item.getCheckOut();
-		// Convert tm type to string in (dd/mm/yyyy) format
-		string dateStr = "";
-		// Append year, month and day in human readable format
-		dateStr = to_string(date.tm_mday) + "/" + to_string(date.tm_mon + 1) + "/" + to_string(date.tm_year + 1900);
-		// If hour and minute is found, append hour and minute
-		if (date.tm_hour != NULL && date.tm_min != NULL) {
-			dateStr += " " + to_string(date.tm_hour) + ":" + to_string(date.tm_min);
-		}
-		cout << "[" << index << "] "
-			<< "Name: " << t->item.getGuestName()
-			<< "  Room Type: " << t->item.getRoom().getType()
-			<< "  Check Out Date: " << dateStr << endl;
-		printOption(t->right, index);
-		return;
-	}
-}
-//get booking
-void BST_Booking::getBooking(Booking& b ,int index) {
-	if (isEmpty()) {
-		cout << "No items found" << endl;
-	}
-	else
-	{
-		int count = 0;
-		return getBooking(root, b, index , count);
-	}
-}
 
-void BST_Booking::getBooking(BinaryNode* t, Booking& b, int index, int& count) {
-	if (t != NULL) {
-		getBooking(t->left, b, index, count);
-		count++;
-		if (count == index) {
-			b = t->item;
-		}
-		getBooking(t->right, b, index, count);
-		return;
-	}
-}
-//get booking
-void BST_Booking::updateBooking(Booking b) {
-	if (isEmpty()) {
-		cout << "No items found" << endl;
-	}
-	else
-	{
-		tm checkin = b.getCheckIn();
-		tm checkout = checkin;
-		checkout.tm_mday++;
-		int count = 0;
-		return updateBooking(root, checkin, checkout, b);
-	}
-}
-void BST_Booking::updateBooking(BinaryNode* t, tm checkIn, tm checkOut, Booking b) {
-	// Base Case
-	if (t == NULL)
-		return;
-
-	bool matchedQuery = isOverlapped(t->item, checkIn, checkOut);
-
-	if (matchedQuery) {
-		//if booked == true search for only status that are booked
-		if (t->item.getId() == b.getId()) {
-			t->item = b;
-		}
-	}
-
-	// If left child of root is present and max of left child is
-	// greater than check in time of check in, 
-	// then there are some rooms occupied during the given check in and check out time
-	if (t->left != NULL && difftime(mktime(&t->left->max), mktime(&checkIn)) > 0)
-		updateBooking(t->left, checkIn, checkOut,b);
-
-	// If right child of root is present and min of right child is
-	// lesser than check out time of check out, 
-	// then there are some rooms occupied during the given check in and check out time
-	if (t->right != NULL && difftime(mktime(&t->right->min), mktime(&checkOut)) < 0)
-		updateBooking(t->right, checkIn, checkOut, b);
-	return;
-}
-
-////Transfer to list for display
-//void BST_Booking::transferList(List& displayList) {
-//	return transferList( root, displayList);
-//}
-//void BST_Booking::transferList(BinaryNode* t,List& displayList) {
-//	if (t != NULL) {
-//		transferList(t->left, displayList);
-//		displayList.add(t->item);
-//		transferList(t->right,displayList);
-//	}
-//	return;
-//}
-
-//Transfer to list for display
-int BST_Booking::availRoomList(List& aRoomList, string type) {
-	List temp = List();
-	availRoomList(root, temp, type);
-	for (int i = 0; i < aRoomList.getLength(); i++) {
-		if (!temp.exists(aRoomList.get(i))) {
-			return aRoomList.get(i);
-		}
-	}
-	
-	return -1;
-}
-void BST_Booking::availRoomList(BinaryNode* t, List& aRoomList, string type) {
-	if (t != NULL) {
-		availRoomList(t->left, aRoomList, type);
-		if (t->item.getRoom().getType() == type) {
-			
-			if (!aRoomList.exists(t->item.getRoom().getRoomNum())) {
-				aRoomList.add(t->item.getRoom().getRoomNum());
-			}				
-		}		
-		availRoomList(t->right, aRoomList,type);
-	}
-	return;
-}
 
 // traverse the binary search tree in preorder
 void BST_Booking::preorder()
@@ -618,6 +484,118 @@ void BST_Booking::remove(BinaryNode*& t, ItemType item)
 		}
 	}
 }
+//Transfer to list for display
+int BST_Booking::availRoomList(List& aRoomList, string type) {
+	List temp = List();
+	availRoomList(root, temp, type);
+	for (int i = 0; i < aRoomList.getLength(); i++) {
+		if (!temp.exists(aRoomList.get(i))) {
+			return aRoomList.get(i);
+		}
+	}
+	
+	return -1;
+}
+void BST_Booking::availRoomList(BinaryNode* t, List& aRoomList, string type) {
+	if (t != NULL) {
+		availRoomList(t->left, aRoomList, type);
+		if (t->item.getRoom().getType() == type) {
+			
+			if (!aRoomList.exists(t->item.getRoom().getRoomNum())) {
+				aRoomList.add(t->item.getRoom().getRoomNum());
+			}				
+		}		
+		availRoomList(t->right, aRoomList,type);
+	}
+	return;
+}
+
+// traverse the binary search tree in inorder
+void BST_Booking::printOption(int& index)
+{
+	if (isEmpty())
+		cout << "No item found" << endl;
+	else
+		return printOption(root,index);
+}
+// print option
+void BST_Booking::printOption(BinaryNode* t, int& index) {
+	if (t != NULL) {
+		printOption(t->left, index);
+		index++;
+		cout << "[" << index << "] "
+			<< "Booking ID: "<< t-> item.getId()
+			<< "  Name: " << t->item.getGuestName()
+			<< "  Room Type: " << t->item.getRoom().getType()
+			<< endl;
+		printOption(t->right, index);
+		return;
+	}
+}
+
+//get booking
+void BST_Booking::getBooking(Booking& b ,int index) {
+	if (isEmpty()) {
+		cout << "No items found" << endl;
+	}
+	else
+	{
+		int count = 0;
+		return getBooking(root, b, index , count);
+	}
+}
+
+void BST_Booking::getBooking(BinaryNode* t, Booking& b, int index, int& count) {
+	if (t != NULL) {
+		getBooking(t->left, b, index, count);
+		count++;
+		if (count == index) {
+			b = t->item;
+		}
+		getBooking(t->right, b, index, count);
+		return;
+	}
+}
+//get booking
+void BST_Booking::updateBooking(Booking b) {
+	if (isEmpty()) {
+		cout << "No items found" << endl;
+	}
+	else
+	{
+		tm checkin = b.getCheckIn();
+		tm checkout = checkin;
+		checkout.tm_mday++;
+		int count = 0;
+		return updateBooking(root, checkin, checkout, b);
+	}
+}
+void BST_Booking::updateBooking(BinaryNode* t, tm checkIn, tm checkOut, Booking b) {
+	// Base Case
+	if (t == NULL)
+		return;
+
+	bool matchedQuery = isOverlapped(t->item, checkIn, checkOut);
+
+	if (matchedQuery) {
+		if (t->item.getId() == b.getId()) {
+			t->item = b;
+		}
+	}
+
+	// If left child of root is present and max of left child is
+	// greater than or equals check in time of check in, 
+	// then there are some rooms occupied during the given check in and check out time
+	if (t->left != NULL && difftime(mktime(&t->left->max), mktime(&checkIn)) >= 0)
+		updateBooking(t->left, checkIn, checkOut,b);
+
+	// If right child of root is present and min of right child is
+	// lesser than or equals check out time of check out, 
+	// then there are some rooms occupied during the given check in and check out time
+	if (t->right != NULL && difftime(mktime(&t->right->min), mktime(&checkOut)) <= 0)
+		updateBooking(t->right, checkIn, checkOut, b);
+	return;
+}
 
 void BST_Booking::searchHighestRoomTypeCount(string& roomType, int& count)
 {
@@ -647,3 +625,33 @@ void BST_Booking::searchHighestRoomTypeCount(BinaryNode* t, Dictionary_Price& ro
 		return;
 	}
 }
+void BST_Booking::printDetails() {
+	printDetails(root);
+}
+void BST_Booking::printDetails(BinaryNode* t) {
+	if (t != NULL) {
+		printDetails(t->left);
+		cout << endl;
+		cout << "Booking ID: " << t->item.getId() << endl;
+		cout << "Guest Name: " << t->item.getGuestName() << endl;
+		cout << "Status: " << t->item.getStatus() << endl;
+		cout << "Room Type: " << t->item.getRoom().getType();
+		cout << "Room Number: " << t->item.getRoom().getRoomNum() << endl;
+		cout << "Check In Date: " << to_string(t->item.getCheckIn().tm_mday) + "/" + to_string(t->item.getCheckIn().tm_mon + 1) + "/" + to_string(t->item.getCheckIn().tm_year + 1900) << endl;
+		cout << "Check Out Date: " << to_string(t->item.getCheckOut().tm_mday) + "/" + to_string(t->item.getCheckOut().tm_mon + 1) + "/" + to_string(t->item.getCheckOut().tm_year + 1900) << endl;
+		printDetails(t->right);
+	}
+}
+//Code Used in debugging to convert tm struct into string
+//string BST_Booking::fromDateTime(tm date) {
+//	// Convert tm type to string in (dd/mm/yyyy) format
+//	string dateStr = "";
+//	// Append year, month and day in human readable format
+//	dateStr = to_string(date.tm_mday) + "/" + to_string(date.tm_mon + 1) + "/" + to_string(date.tm_year + 1900);
+//	// If hour and minute is found, append hour and minute
+//	if (date.tm_hour != NULL && date.tm_min != NULL) {
+//		dateStr += " " + to_string(date.tm_hour) + ":" + to_string(date.tm_min);
+//	}
+//
+//	return dateStr;
+//}

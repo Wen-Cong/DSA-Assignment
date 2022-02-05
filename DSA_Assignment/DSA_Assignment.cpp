@@ -42,8 +42,7 @@ int main()
     initRoomData(roomList, priceList,availRoom);
     initBookingData(bookingList, roomList, priceList);
     //Setting up the start date of the application
-    tm todayDate = toDateTime("02/04/2021\n");
-
+    tm todayDate = toDateTime("01/04/2021\n");
     string choice;
     while (choice != "0")
     {
@@ -58,13 +57,11 @@ int main()
             //Check in a guest using the booking information
             cout << "\n===================== Check In =====================\n";
             cout << "Today's Date: " << fromDateTime(todayDate) << endl;
-            tm endDate = todayDate;
-            endDate.tm_mday++;
 
             //Search for checkin date that falls on today's date
             BST_Booking booking;
-            // Search all bookings that occupies a room within given date range
-            bookingList.overlapSearch(todayDate, endDate, booking, true);
+            // Search all bookings that are booked today
+            bookingList.overlapSearch(todayDate, todayDate, booking, "True");
             if (booking.isEmpty()) {
                 cout << "No bookings today!" << endl;
             }
@@ -72,35 +69,56 @@ int main()
                 //To-Do: Check in users.
                 int index = 0;
                 int userInput;
-                //Let user
+                // from the list, let user select which guest to check in on that day
                 cout << "\n===================== Select Guest =====================\n";
                 booking.printOption(index);
                 cout << "[0] Cancel" << endl;
                 cout << endl;
                 cout << "Please select user to check in:";
                 cin >> userInput;
+                cout << endl;
                 if (userInput != 0|| (userInput >0 && userInput<=index)) {
                     Booking target;
+                    // get the booking details from the user input.
                     booking.getBooking(target, userInput);
+                    // Interval tree for occupied room
                     BST_Booking occupiedRoom;
+                    // List for rooms that are available
                     List availRoomList;
-                    cout << fromDateTime(target.getCheckOut()) << endl;
-                    bookingList.overlapSearch(target.getCheckIn(),target.getCheckOut(), occupiedRoom,false);
+                    //Search if any room is occupied during this time period
+                    bookingList.overlapSearch(target.getCheckIn(),target.getCheckOut(), occupiedRoom,"False");
                     for (int i = 0; i < availRoom.getLength(); i++) {
                         if (roomList.get(availRoom.get(i)).getType() == target.getRoom().getType()) {
                             availRoomList.add(availRoom.get(i));
                         }
                     }
-                    //Get not occupied rooms of the same type
+                    
+                    //Get unoccupied rooms of the same type and return the first available room number
                     int roomNum = occupiedRoom.availRoomList(availRoomList, target.getRoom().getType());
                     if (roomNum != -1) {
+                        //Update details of the booking
                         target.setStatus("Checked In");
                         Room r = target.getRoom();
                         r.setRoomNum(roomNum);
                         target.setRoom(r);
-                        target.print();
+                        string specialReq = "";
+                        if (target.getRequest() == "") {
+                            specialReq = "No Special Requests!";
+                        }
+                        else {
+                            specialReq = target.getRequest();
+                        }
+                        //Update the booking in the list
                         bookingList.updateBooking(target);
+                        //Update the details in the file
                         updateBookingData(target);
+                        cout << "-----  Guest Checkin  -----" << endl;
+                        cout << "Booking ID: " << target.getId() << "\nName: " << target.getGuestName()
+                            << "\nStatus: "<< target.getStatus()
+                            << "\nRoom No.: " << target.getRoom().getRoomNum() 
+                            << "\nNumber of Guests: " << target.getNumOfGuest() 
+                            << "\nSpecial Requests: " << specialReq << endl;
+                        cout << endl;
                     }
                     if (target.getStatus() != "Checked In") {
                         cout << "No available rooms to check in!" << endl;
@@ -109,7 +127,6 @@ int main()
                 }
             }            
         }
-
         else if (choice == "2")
         {
             // Add and save a new booking for the hotel
@@ -227,29 +244,32 @@ int main()
             cout << endl << "Your booking has been created successfully!\n\n";
 
         }
-
         else if (choice == "3")
         {
-        //Finished
             string selectedDate;
             tm dateInput;
             // TO DO : Display guests staying in a particular date
-
             //Check in a guest using the booking information
             cout << "\n===================== Display Guest Staying On A Particular Date =====================\n";
-            cout << "Today's Date: " << fromDateTime(todayDate) << endl;
-            cout << "Please Enter Check In Date (dd/mm/yyyy): ";
+            cout << "[Enter 0 to return]" << endl;
+            cout << "Please Enter Date (dd/mm/yyyy): ";
+            
             cin >> selectedDate;
-            dateInput = toDateTime(selectedDate);
-            //setting the end date (Note: Not inclusive)
-            tm checkout = dateInput;
-            checkout.tm_mday++;
-            //Search for checkin date
-            BST_Booking bookings;
-            // Search all bookings that occupies a room within given date range
-            bookingList.overlapSearch(dateInput, checkout, bookings, false);
-            bookings.inorder();
-
+            if (selectedDate != "0") {
+                //Convert to TM Struct
+                dateInput = toDateTime(selectedDate);
+                //Search for checkin date
+                BST_Booking bookings;
+                // Search all bookings that occupies a room within given date range
+                bookingList.overlapSearch(dateInput, dateInput, bookings, "All");
+                if (bookings.countNodes() > 0) {
+                    bookings.printDetails();
+                }
+                else {
+                    cout << "No Bookings Found!" << endl;
+                }
+            }
+            cout << endl;
         }
 
         else if (choice == "4")
@@ -298,32 +318,39 @@ int main()
             cout << "Room Type: " << roomType << "\nNumber of Bookings Made: " << count << endl << endl;
             cout << "==================================================================\n\n";
         }
-
-        else if (choice == "6")
-        {
-            // TO-DO: Display all the bookings of the hotel within a given time period
-        }
         else if (choice == "6") {
-            // To-Do: Display For a range of dates
-            string startDate,endDate;
+            // To-Do: Display all the bookings of the hotel within a given time period
+            string startDate, endDate;
             tm startDateTM, endDateTM;
             //Check in a guest using the booking information
             cout << "\n===================== Display All Guest Within Time Period =====================\n";
+            cout << "[Enter 0 to return]" << endl;
             cout << "Please Enter Start Date (dd/mm/yyyy): ";
             cin >> startDate;
             cout << "Please Enter End Date (dd/mm/yyyy): ";
             cin >> endDate;
+            //Convert input into TM Struct
             startDateTM = toDateTime(startDate);
             endDateTM = toDateTime(endDate);
-            //setting the start date to be earlier 1 day to include checkout that lie on the same date as start date
-            startDateTM.tm_mday--;
-            //setting the end date to add additional day to include those that check in on that day
-            endDateTM.tm_mday++;
-            //Search for checkin date
-            BST_Booking bookings;
-            // Search all bookings that occupies a room within given date range
-            bookingList.overlapSearch(startDateTM, endDateTM, bookings, false);
-            bookings.inorder();
+            if (startDate != "0" && endDate != "0") {
+                if (difftime(mktime(&endDateTM), mktime(&startDateTM)) <= 0) {
+                    cout << "Start date must be earlier than end date!" << endl;
+                }
+                else {
+                    //Search for checkin date
+                    BST_Booking bookings;
+                    // Search all bookings that occupies a room within given date range
+                    bookingList.overlapSearch(startDateTM, endDateTM, bookings, "All");
+                    if (bookings.countNodes() > 0) {
+                        bookings.printDetails();
+                    }
+                    else {
+                        cout << "No Bookings Found!" << endl;
+                    }
+
+                }
+            }
+            cout << endl;
         }
 
         else if (choice == "7") {
