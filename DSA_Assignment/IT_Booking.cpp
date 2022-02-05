@@ -552,7 +552,13 @@ void IT_Booking::printDetails(BinaryNode* t) {
 		cout << "Guest Name: " << t->item.getGuestName() << endl;
 		cout << "Status: " << t->item.getStatus() << endl;
 		cout << "Room Type: " << t->item.getRoom().getType() << endl;
-		cout << "Room Number: " << t->item.getRoom().getRoomNum() << endl;
+		if (t->item.getRoom().getRoomNum() < 0) {
+			cout << "Room Number: " << "Not Assigned!" << endl;
+		}
+		else {
+			cout << "Room Number: " << t->item.getRoom().getRoomNum() << endl;
+		}
+		
 		cout << "Check In Date: " << to_string(t->item.getCheckIn().tm_mday) + "/" + to_string(t->item.getCheckIn().tm_mon + 1) + "/" + to_string(t->item.getCheckIn().tm_year + 1900) << endl;
 		cout << "Check Out Date: " << to_string(t->item.getCheckOut().tm_mday) + "/" + to_string(t->item.getCheckOut().tm_mon + 1) + "/" + to_string(t->item.getCheckOut().tm_year + 1900) << endl;
 		printDetails(t->right);
