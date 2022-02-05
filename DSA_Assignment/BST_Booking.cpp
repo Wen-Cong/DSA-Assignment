@@ -4,8 +4,8 @@
 // Team Number : 10
 // Module Group : P02 
 //============================================================
-// BST_Booking.cpp - Implementation of Binary Search Tree
-// Bookings stored in this BST are sorted by check in date
+// BST_Booking.cpp - Implementation of Interval Tree
+// Bookings stored in this IT are sorted by check in date
 #pragma once
 
 #include "BST_Booking.h"
@@ -18,90 +18,7 @@ BST_Booking::BST_Booking()
 	root = NULL;
 }
 
-// search an item in the binary search tree
-BinaryNode* BST_Booking::search(ItemType target)
-{
-	return search(root, target);
-}
 
-BinaryNode* BST_Booking::search(BinaryNode* t, ItemType target)
-{
-	if (t == NULL)	// item not found
-		return NULL;
-	else
-	{
-		if ((t->item.getCheckIn().tm_year == target.getCheckIn().tm_year)
-			&& (t->item.getCheckIn().tm_mon == target.getCheckIn().tm_mon)
-			&& (t->item.getCheckIn().tm_mday == target.getCheckIn().tm_mday))		// item found
-			return t;
-		else
-		{
-			//Comparing time the year have to be the no. of years different from 1900
-			tm compare = t->item.getCheckIn();
-			tm temp = target.getCheckIn();
-			//if difftime > 1 temp is earlier
-			if (difftime(mktime(&compare), mktime(&temp)) > 0)
-				return search(t->left, target);
-			else					// search in right subtree
-				return search(t->right, target);
-		}
-	}
-}
-
-// //search for range of items in the binary search tree and return count
-//int BST_Booking::searchRange(tm checkin, tm checkout, string roomType)
-//{
-//	return searchRange(root, checkin, checkout, roomType);
-//}
-
-//int BST_Booking::searchRange(BinaryNode* root, tm checkin, tm checkout, string roomType)
-//{
-//	if (root == NULL)
-//	{
-//		//base case: the tree is empty, we can return 0
-//		return 0;
-//	}
-//	else
-//	{
-//		// our tree is not empty.
-//		int countLeftOccupiedRooms = searchRange(root->left, checkin, checkout, roomType);
-//		int countRightOccupiedRooms = searchRange(root->right, checkin, checkout, roomType);
-//
-//		// Get and format all time data for comparison
-//		tm bookingCheckIn = root->item.getCheckIn();
-//		tm bookingCheckOut = root->item.getCheckOut();
-//		tm tempCheckIn = checkin;
-//		tm tempCheckOut = checkout;
-//
-//		// Set condition to determine if room is occupied or booked
-//		/*Checkout date for bookings that are currently in checked in status
-//		  is more than check in date entered by customer. Hence, room is unavailable*/
-//		bool isRoomOccupied = root->item.getStatus() == "Checked In" 
-//						   && root->item.getRoom().getType() == roomType
-//						   && difftime(mktime(&bookingCheckOut), mktime(&tempCheckIn)) > 0; // booking check out date is more than check in date entered by customer
-//		
-//
-//		/*If booking check-in date or booking check-out date is within date range input by user
-//		and status is booked, then room is unavailable.*/
-//		bool isRoomBooked = root->item.getStatus() == "Booked"
-//			&& root->item.getRoom().getType() == roomType
-//			&& (
-//				(difftime(mktime(&bookingCheckIn), mktime(&tempCheckIn)) >= 0 // booking check in date is more than check in date entered by customer
-//					&& difftime(mktime(&bookingCheckIn), mktime(&tempCheckOut)) < 0) // booking check in date is less than check out date entered by customer
-//				|| (difftime(mktime(&bookingCheckOut), mktime(&tempCheckIn)) > 0 // booking check out date is more than check in date entered by customer
-//					&& difftime(mktime(&bookingCheckOut), mktime(&tempCheckOut)) <= 0)); // booking check out date is less than check out date entered by customer
-//
-//		if (isRoomOccupied || isRoomBooked)
-//		{
-//			/* 1 more room of this room type is unavailable based on the date range given: we will count it */
-//			return 1 + countLeftOccupiedRooms + countRightOccupiedRooms;
-//		}
-//		else
-//		{
-//			return countLeftOccupiedRooms + countRightOccupiedRooms;
-//		}
-//	}
-//}
 
 // Check if given two booking have overlapping check-in and check-out date range
 bool isOverlapped(ItemType b1, ItemType b2)
@@ -484,7 +401,7 @@ void BST_Booking::remove(BinaryNode*& t, ItemType item)
 		}
 	}
 }
-//Transfer to list for display
+//Find the first available room number.
 int BST_Booking::availRoomList(List& aRoomList, string type) {
 	List temp = List();
 	availRoomList(root, temp, type);
@@ -510,7 +427,7 @@ void BST_Booking::availRoomList(BinaryNode* t, List& aRoomList, string type) {
 	return;
 }
 
-// traverse the binary search tree in inorder
+// print the option number and relevant booking details
 void BST_Booking::printOption(int& index)
 {
 	if (isEmpty())
@@ -533,7 +450,7 @@ void BST_Booking::printOption(BinaryNode* t, int& index) {
 	}
 }
 
-//get booking
+//get booking witht the selected index
 void BST_Booking::getBooking(Booking& b ,int index) {
 	if (isEmpty()) {
 		cout << "No items found" << endl;
@@ -556,7 +473,7 @@ void BST_Booking::getBooking(BinaryNode* t, Booking& b, int index, int& count) {
 		return;
 	}
 }
-//get booking
+// update booking details
 void BST_Booking::updateBooking(Booking b) {
 	if (isEmpty()) {
 		cout << "No items found" << endl;
@@ -654,4 +571,90 @@ void BST_Booking::printDetails(BinaryNode* t) {
 //	}
 //
 //	return dateStr;
+//}
+// 
+// Codes not in use
+//// search an item in the binary search tree
+//BinaryNode* BST_Booking::search(ItemType target)
+//{
+//	return search(root, target);
+//}
+//
+//BinaryNode* BST_Booking::search(BinaryNode* t, ItemType target)
+//{
+//	if (t == NULL)	// item not found
+//		return NULL;
+//	else
+//	{
+//		if ((t->item.getCheckIn().tm_year == target.getCheckIn().tm_year)
+//			&& (t->item.getCheckIn().tm_mon == target.getCheckIn().tm_mon)
+//			&& (t->item.getCheckIn().tm_mday == target.getCheckIn().tm_mday))		// item found
+//			return t;
+//		else
+//		{
+//			//Comparing time the year have to be the no. of years different from 1900
+//			tm compare = t->item.getCheckIn();
+//			tm temp = target.getCheckIn();
+//			//if difftime > 1 temp is earlier
+//			if (difftime(mktime(&compare), mktime(&temp)) > 0)
+//				return search(t->left, target);
+//			else					// search in right subtree
+//				return search(t->right, target);
+//		}
+//	}
+//}
+
+// //search for range of items in the binary search tree and return count
+//int BST_Booking::searchRange(tm checkin, tm checkout, string roomType)
+//{
+//	return searchRange(root, checkin, checkout, roomType);
+//}
+
+//int BST_Booking::searchRange(BinaryNode* root, tm checkin, tm checkout, string roomType)
+//{
+//	if (root == NULL)
+//	{
+//		//base case: the tree is empty, we can return 0
+//		return 0;
+//	}
+//	else
+//	{
+//		// our tree is not empty.
+//		int countLeftOccupiedRooms = searchRange(root->left, checkin, checkout, roomType);
+//		int countRightOccupiedRooms = searchRange(root->right, checkin, checkout, roomType);
+//
+//		// Get and format all time data for comparison
+//		tm bookingCheckIn = root->item.getCheckIn();
+//		tm bookingCheckOut = root->item.getCheckOut();
+//		tm tempCheckIn = checkin;
+//		tm tempCheckOut = checkout;
+//
+//		// Set condition to determine if room is occupied or booked
+//		/*Checkout date for bookings that are currently in checked in status
+//		  is more than check in date entered by customer. Hence, room is unavailable*/
+//		bool isRoomOccupied = root->item.getStatus() == "Checked In" 
+//						   && root->item.getRoom().getType() == roomType
+//						   && difftime(mktime(&bookingCheckOut), mktime(&tempCheckIn)) > 0; // booking check out date is more than check in date entered by customer
+//		
+//
+//		/*If booking check-in date or booking check-out date is within date range input by user
+//		and status is booked, then room is unavailable.*/
+//		bool isRoomBooked = root->item.getStatus() == "Booked"
+//			&& root->item.getRoom().getType() == roomType
+//			&& (
+//				(difftime(mktime(&bookingCheckIn), mktime(&tempCheckIn)) >= 0 // booking check in date is more than check in date entered by customer
+//					&& difftime(mktime(&bookingCheckIn), mktime(&tempCheckOut)) < 0) // booking check in date is less than check out date entered by customer
+//				|| (difftime(mktime(&bookingCheckOut), mktime(&tempCheckIn)) > 0 // booking check out date is more than check in date entered by customer
+//					&& difftime(mktime(&bookingCheckOut), mktime(&tempCheckOut)) <= 0)); // booking check out date is less than check out date entered by customer
+//
+//		if (isRoomOccupied || isRoomBooked)
+//		{
+//			/* 1 more room of this room type is unavailable based on the date range given: we will count it */
+//			return 1 + countLeftOccupiedRooms + countRightOccupiedRooms;
+//		}
+//		else
+//		{
+//			return countLeftOccupiedRooms + countRightOccupiedRooms;
+//		}
+//	}
 //}

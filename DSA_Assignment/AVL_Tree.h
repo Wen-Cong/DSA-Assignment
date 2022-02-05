@@ -14,10 +14,18 @@ using namespace std;
 void balanceTree(BinaryNode*& t);
 
 // AVL Tree functions
+// balance a node
 BinaryNode* balance(BinaryNode* t);
+// left rotation of node
 BinaryNode* rotateLeft(BinaryNode* node);
+// right rotation of node
 BinaryNode* rotateRight(BinaryNode* node);
+// left right rotation of node
 BinaryNode* rotateLeftRight(BinaryNode* node);
+// right left rotation of node
 BinaryNode* rotateRightLeft(BinaryNode* node);
+// check the difference in number of nodes in left and right subtrees
+// left heavy  : diff > +1
+// right heavy : diff < -1
 int diff(BinaryNode* t);
 int getHeight(BinaryNode* t);
