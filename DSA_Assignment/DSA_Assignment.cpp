@@ -18,17 +18,37 @@
 #include "Queue.h"
 using namespace std;
 
-
+// Convert string to integer
 int toInt(string text);
+
+// Convert date string in dd/mm/yyyy format to tm
 tm toDateTime(string dateString);
+
+// Convert tm to date string in dd/mm/yyyy format
 string fromDateTime(tm date);
+
+// Calculate the last date of each month
 int getMaxDay(int month, int year);
+
+// Read from room csv file and initialise room data to dictionary
 void initRoomData(Dictionary_Room& roomList, Dictionary_Price& priceList, List& availRoom);
+
+// Read from booking csv file and initialise booking data to interval tree
 void initBookingData(BST_Booking& bookingList, Dictionary_Room& roomList, Dictionary_Price& priceList);
+
+// Print all main menu options
 void displayMainMenu(tm todayDate);
+
+// Print all months from January to December
 void displayAllMonths();
+
+// Convert user option 1,2,3,4 to respective room type name
 string convertOptionToRoomTypeName(string opt);
+
+// Insert booking to booking collection and append data to booking csv file
 bool addNewBooking(BST_Booking& bookingList, Booking b);
+
+// Update booking data in csv file for any editing changes made to booking data
 void updateBookingData(Booking b);
 
 int main()
@@ -248,8 +268,7 @@ int main()
         {
             string selectedDate;
             tm dateInput;
-            // TO DO : Display guests staying in a particular date
-            //Check in a guest using the booking information
+            // Display guests staying in a particular date
             cout << "\n===================== Display Guest Staying On A Particular Date =====================\n";
             cout << "[Enter 0 to return]" << endl;
             cout << "Please Enter Date (dd/mm/yyyy): ";
